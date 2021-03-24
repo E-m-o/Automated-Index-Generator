@@ -10,6 +10,7 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
     Creates all the indices for a sub-folder in subdir_list in which relevant bands are found
 
     :param subdir_list: list of strings with paths
+    :param root: root directory
     :type root: string
     :type landsat_list_len: integer
     :type sentinel_list_len: integer
@@ -19,6 +20,7 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
         print('Invalid paths')
         print('Terminating')
         exit()
+
     for sub in subdir_list:
         caps_tif_list = glob.glob(sub+'/*.TIF')
         if len(caps_tif_list) >= landsat_list_len:
