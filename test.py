@@ -28,12 +28,12 @@ import os
 os.chdir('/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/Temp/Start_date')
 print(os.getcwd())
 
-# list_ = glob.glob('*.tar.gz')
-# # print(list_)
-#
-# for gzip in list_:
-#     print('GUNZIPing {}'.format(gzip))
-#     os.system('gunzip -f -k {}'.format(gzip))
+list_ = glob.glob('*.tar.gz')
+# print(list_)
+
+for gzip in list_:
+    print('GUNZIPing {}'.format(gzip))
+    os.system('gunzip -f -k {}'.format(gzip))
 
 list_ = glob.glob('*.tar')
 
