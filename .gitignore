@@ -2,3 +2,4 @@
 *.TIF
 *.jp2
 Test_files/
+__pycache__/
