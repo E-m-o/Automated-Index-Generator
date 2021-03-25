@@ -5,3 +5,4 @@ Test_files/
 __pycache__/
 geckodriver.log
 crawlers/geckodriver.log
+Images/
