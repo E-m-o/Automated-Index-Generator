@@ -1,5 +1,5 @@
 from crawlers.web_crawler_earthexplorer import *
-from mosaic.index_creator import *
+from index_calculator.index_creator import *
 from mosaic.unzipper import *
 from crawlers import web_crawler_earthexplorer as earth
 
@@ -7,7 +7,9 @@ path_list = ['/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/test
 # , '/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/test_mandala/mandlaBB-2.zip'
 
 earth.driver = make_driver()
-
+choice = None
+request = input("Enter Request Number ->")
+base_path = '/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Request.{}'.format(request)
 for path in path_list:
     path_flag = False
     while not path_flag:
@@ -62,8 +64,8 @@ for path in path_list:
         else:
             print(flags)
 
-un_zipper()
+down_dir, name = decompress(choice, base_path)
 
 subdir_list = [x[0] for x in os.walk('.')]
 root = os.getcwd()
-crawler(subdir_list, root, test=True)
+crawler(subdir_list, root, test=False)
