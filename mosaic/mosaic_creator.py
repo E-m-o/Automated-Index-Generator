@@ -73,6 +73,6 @@ def mosaic_creator(down_dir_dict=dict, test=False):
         # print(band_dict)
 
 
-d = unzipper.decompress(sat_choice='1', path='/home/emo/Storage/Projects/Raster_Image_Calculator/Images')
-# print(os.getcwd())
-mosaic_creator(d)
+# d = unzipper.decompress(sat_choice='1', path='/home/emo/Storage/Projects/Raster_Image_Calculator/Images')
+# # print(os.getcwd())
+# mosaic_creator(d)
