@@ -20,15 +20,15 @@ def band_returner_sentinel(show_list=False):
     ret_dict = {}
 
     for band in _list:
-        if '8A.jp2' in band[-7:]:
+        if '8A.tiff' in band[-7:]:
             ret_dict['8a'] = band  # nir
-        if '11.jp2' in band[-7:]:
+        if '11.tiff' in band[-7:]:
             ret_dict['11'] = band  # swir
-        if '08.jp2' in band[-7:]:
+        if '8.tiff' in band[-7:]:
             ret_dict['8'] = band  # nir
-        if '04.jp2' in band[-7:]:
+        if '4.tiff' in band[-7:]:
             ret_dict['4'] = band  # red
-        if '03.jp2' in band[-7:]:
+        if '3.tiff' in band[-7:]:
             ret_dict['3'] = band  # green
     if show_list:
         print(ret_dict)
@@ -245,49 +245,6 @@ def ndwi_calc_sentinel(show_flag=False):
             show(ndwi, cmap='Greens')
 
 
-def ndsi_calc_sentinel(show_flag=False):
-    """
-    Calculates and saves the Normalised Difference Snow Index (NDSI) raster image
-
-    :param show_flag: setting to show index after calculation
-    :type show_flag: bool
-    """
-    # get bands relevant to ndvi
-    band_dict = band_returner_sentinel()
-
-    if band_dict:
-        # read bands
-        band3 = open(band_dict['3'])  # green
-        band11 = open(band_dict['11'])  # swir
-        green = band3.read(1).astype('float64')
-        swir = band11.read(1).astype('float64')
-
-        # calculate ndsi raster image
-        ndsi = np.where(
-            (swir + green) == 0.,
-            0,
-            (green - swir) / (green + swir)
-        )
-
-        # INSERT CHECKING CONDITION
-        ndsi[ndsi > 1] = 1
-        ndsi[ndsi < -1] = -1
-
-        # save ndsi raster image
-        ndsi_image = open('./ndsi_sentinel.tiff', 'w', driver='GTiff',
-                          width=band11.width, height=band11.height,
-                          count=1,
-                          crs=band11.crs,
-                          transform=band11.transform,
-                          dtype='float64')
-        ndsi_image.write(ndsi, 1)
-        ndsi_image.close()
-
-        if show_flag:
-            ndsi = open('ndsi_sentinel.tiff')
-            show(ndsi, cmap='Greens')
-
-
 def image_display_sentinel():
     """
     Displays the images of landsat indices in a folder one at a time
@@ -297,13 +254,11 @@ def image_display_sentinel():
     savi = open('savi_sentinel.tiff')
     msavi = open('msavi_sentinel.tiff')
     ndwi = open('ndwi_sentinel.tiff')
-    ndsi = open('ndsi_sentinel.tiff')
     show(ndmi, cmap='Blues')
     show(ndvi, cmap='Greens')
     show(savi, cmap='Greens')
     show(msavi, cmap='Greens')
     show(ndwi, cmap='BrBG')
-    show(ndsi, cmap='RdBu')
 
 
 def execute_sentinel(show_individual=False, show_all=False, show_only=False):
@@ -326,7 +281,6 @@ def execute_sentinel(show_individual=False, show_all=False, show_only=False):
         savi_calc_sentinel(show_flag=show_individual)
         msavi_calc_sentinel(show_flag=show_individual)
         ndwi_calc_sentinel(show_flag=show_individual)
-        ndsi_calc_sentinel(show_flag=show_individual)
         if show_all:
             image_display_sentinel()
     except RuntimeError:

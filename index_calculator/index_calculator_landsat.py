@@ -254,49 +254,6 @@ def ndwi_calc_landsat(show_flag=False):
             show(ndwi, cmap='Greens')
 
 
-def ndsi_calc_landsat(show_flag=False):
-    """
-    Calculates and saves the Normalised Difference Snow Index (NDSI) raster image
-
-    :param show_flag: flag
-    :type show_flag: bool
-    """
-    # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
-
-    if band_dict:
-        # read bands
-        band3 = open(band_dict['3'])  # green
-        band6 = open(band_dict['6'])  # swir
-        green = band3.read(1).astype('float64')
-        swir = band6.read(1).astype('float64')
-
-        # calculate ndsi raster image
-        ndsi = np.where(
-            (swir + green) == 0.,
-            0,
-            (green - swir) / (green + swir)
-        )
-
-        # INSERT CHECKING CONDITION
-        ndsi[ndsi > 1] = 1
-        ndsi[ndsi < -1] = -1
-
-        # save ndsi raster image
-        ndsi_image = open('./ndsi_landsat.tiff', 'w', driver='GTiff',
-                          width=band6.width, height=band6.height,
-                          count=1,
-                          crs=band6.crs,
-                          transform=band6.transform,
-                          dtype='float64')
-        ndsi_image.write(ndsi, 1)
-        ndsi_image.close()
-
-        if show_flag:
-            ndsi = open('ndsi_landsat.tiff')
-            show(ndsi, cmap='Greens')
-
-
 def image_display_landsat():
     """
     Displays the images of landsat indices in a folder one at a time
@@ -306,13 +263,11 @@ def image_display_landsat():
     savi = open('savi_landsat.tiff')
     msavi = open('msavi_landsat.tiff')
     ndwi = open('ndwi_landsat.tiff')
-    ndsi = open('ndsi_landsat.tiff')
     show(ndmi, cmap='Blues')
     show(ndvi, cmap='Greens')
     show(savi, cmap='Greens')
     show(msavi, cmap='Greens')
     show(ndwi, cmap='BrBG')
-    show(ndsi, cmap='RdBu')
 
 
 def execute_landsat(show_individual=False, show_all=False, show_only=False):
@@ -335,7 +290,6 @@ def execute_landsat(show_individual=False, show_all=False, show_only=False):
         savi_calc_landsat(show_flag=show_individual)
         msavi_calc_landsat(show_flag=show_individual)
         ndwi_calc_landsat(show_flag=show_individual)
-        ndsi_calc_landsat(show_flag=show_individual)
         if show_all:
             image_display_landsat()
     except RuntimeError:
