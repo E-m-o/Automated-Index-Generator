@@ -25,6 +25,8 @@ def band_returner_landsat(show_list=False):
             ret_dict['5'] = band  # nir
         if '4.TIF' in band[-7:]:
             ret_dict['4'] = band  # red
+        if '3.TIF' in band[-7:]:
+            ret_dict['3'] = band  # green
 
     for band in _list:
         if '6.tif' in band[-7:]:
@@ -33,6 +35,8 @@ def band_returner_landsat(show_list=False):
             ret_dict['5'] = band  # nir
         if '4.tif' in band[-7:]:
             ret_dict['4'] = band  # red
+        if '3.tif' in band[-7:]:
+            ret_dict['3'] = band  # green
 
     if show_list:
         # print(_list)
@@ -185,7 +189,7 @@ def msavi_calc_landsat(show_flag=False):
         msavi = np.where(
             (nir + red) == 0.,
             0,
-            (2 * nir + 1 - np.sqrt((2 * nir + 1)**2 - 8 * (nir - red)))/2
+            (2 * nir + 1 - np.sqrt((2 * nir + 1) ** 2 - 8 * (nir - red))) / 2
         )
 
         # INSERT CHECKING CONDITION
@@ -203,8 +207,94 @@ def msavi_calc_landsat(show_flag=False):
         msavi_image.close()
 
         if show_flag:
-            msavi = open('savi_landsat.tiff')
+            msavi = open('msavi_landsat.tiff')
             show(msavi, cmap='Greens')
+
+
+def ndwi_calc_landsat(show_flag=False):
+    """
+    Calculates and saves the Normalised Difference Water Index (NDWI) raster image
+
+    :param show_flag: flag
+    :type show_flag: bool
+    """
+    # get bands relevant to ndvi
+    band_dict = band_returner_landsat()
+
+    if band_dict:
+        # read bands
+        band3 = open(band_dict['3'])  # green
+        band5 = open(band_dict['5'])  # nir
+        green = band3.read(1).astype('float64')
+        nir = band5.read(1).astype('float64')
+
+        # calculate ndwi raster image
+        ndwi = np.where(
+            (nir + green) == 0.,
+            0,
+            (green - nir) / (green + nir)
+        )
+
+        # INSERT CHECKING CONDITION
+        ndwi[ndwi > 1] = 1
+        ndwi[ndwi < -1] = -1
+
+        # save ndwi raster image
+        ndwi_image = open('./ndwi_landsat.tiff', 'w', driver='GTiff',
+                          width=band5.width, height=band5.height,
+                          count=1,
+                          crs=band5.crs,
+                          transform=band5.transform,
+                          dtype='float64')
+        ndwi_image.write(ndwi, 1)
+        ndwi_image.close()
+
+        if show_flag:
+            ndwi = open('ndwi_landsat.tiff')
+            show(ndwi, cmap='Greens')
+
+
+def ndsi_calc_landsat(show_flag=False):
+    """
+    Calculates and saves the Normalised Difference Snow Index (NDSI) raster image
+
+    :param show_flag: flag
+    :type show_flag: bool
+    """
+    # get bands relevant to ndvi
+    band_dict = band_returner_landsat()
+
+    if band_dict:
+        # read bands
+        band3 = open(band_dict['3'])  # green
+        band6 = open(band_dict['6'])  # swir
+        green = band3.read(1).astype('float64')
+        swir = band6.read(1).astype('float64')
+
+        # calculate ndsi raster image
+        ndsi = np.where(
+            (swir + green) == 0.,
+            0,
+            (green - swir) / (green + swir)
+        )
+
+        # INSERT CHECKING CONDITION
+        ndsi[ndsi > 1] = 1
+        ndsi[ndsi < -1] = -1
+
+        # save ndsi raster image
+        ndsi_image = open('./ndsi_landsat.tiff', 'w', driver='GTiff',
+                          width=band6.width, height=band6.height,
+                          count=1,
+                          crs=band6.crs,
+                          transform=band6.transform,
+                          dtype='float64')
+        ndsi_image.write(ndsi, 1)
+        ndsi_image.close()
+
+        if show_flag:
+            ndsi = open('ndsi_landsat.tiff')
+            show(ndsi, cmap='Greens')
 
 
 def image_display_landsat():
@@ -215,10 +305,14 @@ def image_display_landsat():
     ndvi = open('ndvi_landsat.tiff')
     savi = open('savi_landsat.tiff')
     msavi = open('msavi_landsat.tiff')
+    ndwi = open('ndwi_landsat.tiff')
+    ndsi = open('ndsi_landsat.tiff')
     show(ndmi, cmap='Blues')
     show(ndvi, cmap='Greens')
     show(savi, cmap='Greens')
     show(msavi, cmap='Greens')
+    show(ndwi, cmap='BrBG')
+    show(ndsi, cmap='RdBu')
 
 
 def execute_landsat(show_individual=False, show_all=False, show_only=False):
@@ -240,6 +334,8 @@ def execute_landsat(show_individual=False, show_all=False, show_only=False):
         ndvi_calc_landsat(show_flag=show_individual)
         savi_calc_landsat(show_flag=show_individual)
         msavi_calc_landsat(show_flag=show_individual)
+        ndwi_calc_landsat(show_flag=show_individual)
+        ndsi_calc_landsat(show_flag=show_individual)
         if show_all:
             image_display_landsat()
     except RuntimeError:

@@ -29,7 +29,10 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
             print('Landsat images found in .{}'.format(current_dir))
             if not test:
                 print('Calculating Indices.....')
-                index_calculator_landsat.execute_landsat()
+                try:
+                    index_calculator_landsat.execute_landsat()
+                except ValueError:
+                    print('Unable to make all indices')
         os.chdir(root)
 
     for sub in subdir_list:
@@ -39,7 +42,10 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
             print('Landsat images found in .{}'.format(os.getcwd()))
             if not test:
                 print('Calculating Indices.....')
-                index_calculator_landsat.execute_landsat()
+                try:
+                    index_calculator_landsat.execute_landsat()
+                except ValueError:
+                    print('Unable to make all indices')
         os.chdir(root)
 
     for sub in subdir_list:
@@ -49,7 +55,10 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
             print('Sentinel images found in .{}'.format(os.getcwd()))
             if not test:
                 print('Calculating Indices.....')
-                index_calculator_sentinel.execute_sentinel()
+                try:
+                    index_calculator_sentinel.execute_sentinel()
+                except ValueError:
+                    print('Unable to make all indices')
         os.chdir(root)
 
     for sub in subdir_list:
@@ -59,5 +68,8 @@ def crawler(subdir_list=None, root=str, landsat_list_len=3, sentinel_list_len=3,
             print('Sentinel images found in .{}'.format(os.getcwd()))
             if not test:
                 print('Calculating Indices.....')
-                index_calculator_sentinel.execute_sentinel()
+                try:
+                    index_calculator_sentinel.execute_sentinel()
+                except ValueError:
+                    print('Unable to make all indices')
         os.chdir(root)
