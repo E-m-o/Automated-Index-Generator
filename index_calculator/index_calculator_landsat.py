@@ -47,10 +47,11 @@ def band_returner_landsat(show_list=False):
         return False
 
 
-def ndmi_calc_landsat(show_flag=False):
+def ndmi_calc_landsat(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Moisture Index (NDMI) raster image
-
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_flag: flag
     :type show_flag: bool
     """
@@ -72,7 +73,7 @@ def ndmi_calc_landsat(show_flag=False):
         )
 
         # save ndmi raster image
-        ndmi_image = open('./ndmi_landsat.tiff', 'w', driver='GTiff',
+        ndmi_image = open('./{}_ndmi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -82,14 +83,15 @@ def ndmi_calc_landsat(show_flag=False):
         ndmi_image.close()
 
         if show_flag:
-            ndmi = open('ndmi_landsat.tiff')
+            ndmi = open('{}_ndmi_landsat.tiff'.format(prefix))
             show(ndmi, cmap='Blues')
 
 
-def ndvi_calc_landsat(show_flag=False):
+def ndvi_calc_landsat(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Vegetation Index (NDVI) raster image
-
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_flag: flag
     :type show_flag: bool
     """
@@ -111,7 +113,7 @@ def ndvi_calc_landsat(show_flag=False):
         )
 
         # save ndvi raster image
-        ndvi_image = open('./ndvi_landsat.tiff', 'w', driver='GTiff',
+        ndvi_image = open('./{}_ndvi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -121,14 +123,15 @@ def ndvi_calc_landsat(show_flag=False):
         ndvi_image.close()
 
         if show_flag:
-            ndvi = open('ndvi_landsat.tiff')
+            ndvi = open('{}_ndvi_landsat.tiff'.format(prefix))
             show(ndvi, cmap='Greens')
 
 
-def savi_calc_landsat(show_flag=False):
+def savi_calc_landsat(prefix=None, show_flag=False):
     """
     Calculates and saves the Soil Adjusted Vegetation Index (SAVI) raster image
-
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_flag: flag
     :type show_flag: bool
     """
@@ -154,7 +157,7 @@ def savi_calc_landsat(show_flag=False):
         savi[savi < -1] = -1
 
         # save savi raster image
-        savi_image = open('./savi_landsat.tiff', 'w', driver='GTiff',
+        savi_image = open('./{}_savi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -164,14 +167,15 @@ def savi_calc_landsat(show_flag=False):
         savi_image.close()
 
         if show_flag:
-            savi = open('savi_landsat.tiff')
+            savi = open('{}_savi_landsat.tiff'.format(prefix))
             show(savi, cmap='Greens')
 
 
-def msavi_calc_landsat(show_flag=False):
+def msavi_calc_landsat(prefix=None, show_flag=False):
     """
     Calculates and saves the Modified Soil Adjusted Vegetation Index (MSAVI) raster image
-
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_flag: flag
     :type show_flag: bool
     """
@@ -197,7 +201,7 @@ def msavi_calc_landsat(show_flag=False):
         msavi[msavi < -1] = -1
 
         # save msavi raster image
-        msavi_image = open('./msavi_landsat.tiff', 'w', driver='GTiff',
+        msavi_image = open('./{}_msavi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
                            width=band5.width, height=band5.height,
                            count=1,
                            crs=band5.crs,
@@ -207,14 +211,15 @@ def msavi_calc_landsat(show_flag=False):
         msavi_image.close()
 
         if show_flag:
-            msavi = open('msavi_landsat.tiff')
+            msavi = open('{}_msavi_landsat.tiff'.format(prefix))
             show(msavi, cmap='Greens')
 
 
-def ndwi_calc_landsat(show_flag=False):
+def ndwi_calc_landsat(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Water Index (NDWI) raster image
-
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_flag: flag
     :type show_flag: bool
     """
@@ -240,7 +245,7 @@ def ndwi_calc_landsat(show_flag=False):
         ndwi[ndwi < -1] = -1
 
         # save ndwi raster image
-        ndwi_image = open('./ndwi_landsat.tiff', 'w', driver='GTiff',
+        ndwi_image = open('./{}_ndwi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -250,7 +255,7 @@ def ndwi_calc_landsat(show_flag=False):
         ndwi_image.close()
 
         if show_flag:
-            ndwi = open('ndwi_landsat.tiff')
+            ndwi = open('{}_ndwi_landsat.tiff'.format(prefix))
             show(ndwi, cmap='Greens')
 
 
@@ -270,10 +275,12 @@ def image_display_landsat():
     show(ndwi, cmap='BrBG')
 
 
-def execute_landsat(show_individual=False, show_all=False, show_only=False):
+def execute_landsat(prefix=None, show_individual=False, show_all=False, show_only=False):
     """
     Executes the process of calculation of indices for landsat images
 
+    :param prefix: Prefix to be added to the saved indices
+    :type prefix: string
     :param show_individual: setting for showing individual images while calculating indices
     :type show_individual: bool
     :param show_all: setting to show all the indices one by one after calculation
@@ -285,11 +292,11 @@ def execute_landsat(show_individual=False, show_all=False, show_only=False):
         if show_only:
             image_display_landsat()
             exit()
-        ndmi_calc_landsat(show_flag=show_individual)
-        ndvi_calc_landsat(show_flag=show_individual)
-        savi_calc_landsat(show_flag=show_individual)
-        msavi_calc_landsat(show_flag=show_individual)
-        ndwi_calc_landsat(show_flag=show_individual)
+        ndmi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        ndvi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        savi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        msavi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        ndwi_calc_landsat(prefix=prefix, show_flag=show_individual)
         if show_all:
             image_display_landsat()
     except RuntimeError:
