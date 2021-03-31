@@ -2,66 +2,68 @@ import glob
 import os
 
 
-def decompress(sat_choice=str, path=str):
+def decompress(path=str):
     """
     Unzips the *tar.gz files to folders with their respective names
     :return: Download directory list
-    :param sat_choice: Satellite choice -> 1. Landsat | 2. Sentinel
-    :type sat_choice: str
+    # :param sat_choice: Satellite choice -> 1. Landsat | 2. Sentinel
+    # :type sat_choice: str
     :param path: Path of root directory
     :type path: str
     """
     print("===================")
     print("Decompressing files")
-    # path = '/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Request.0'
+
     os.chdir(path=path)
     root = os.getcwd()
-    # print(root)
-    name_list = []
-    down_dir = []
+
+    name_list_tar = []
+    down_dir_tar = []
+    name_list_zip = []
+    down_dir_zip = []
     down_dir_dict = {}
-    if sat_choice == '1':
-        tar_list = glob.glob(os.path.join(root, '**/*.tar.gz'), recursive=True)
+    tar_list = glob.glob(os.path.join(root, '**/*.tar.gz'), recursive=True)
+    paths = []
+    if tar_list:
         for (i, tar) in enumerate(tar_list):
             tar_split = tar.split('/')
             split = '/'.join(tar_split[:-1])
             name = tar_split[-1].split('.')[0]
-            name_list.append(name)
-            down_dir.append(split)
+            name_list_tar.append(name)
+            down_dir_tar.append(split)
             try:
-                os.chdir(down_dir[i])
-                os.mkdir(name_list[i])
-                os.chdir(root)
+                paths.append(os.path.join(split, name))
+                os.mkdir(paths[i])
             except FileExistsError:
                 pass
         for (i, tar) in enumerate(tar_list):
-            os.system('tar -xzf {} -C {}'.format(tar, os.path.join(down_dir[i], name_list[i])))
+            os.system('tar -xzf {} -C {}'.format(tar, paths[i]))
 
-    elif sat_choice == '2':
-        zip_list = glob.glob(os.path.join(root, '**/*.zip'), recursive=True)
-        for (i, zip_) in enumerate(zip_list):
+    zip_list = glob.glob(os.path.join(root, '**/*.zip'), recursive=True)
+    if zip_list:
+        for (i, zip_) in enumerate(zip_list, len(tar_list)):
             zip_split = zip_.split('/')
-            name = zip_split[-1].split('.')[0]
-            name_list.append(name)
             split = '/'.join(zip_split[:-1])
-            down_dir.append(split)
+            name = zip_split[-1].split('.')[0]
+            name_list_zip.append(name)
+            down_dir_zip.append(split)
             try:
-                os.chdir(down_dir[i])
-                os.mkdir(name_list[i])
-                os.chdir(root)
+                paths.append(os.path.join(split, name))
+                os.mkdir(paths[i])
             except FileExistsError:
                 pass
-        for (i, zip_) in enumerate(zip_list):
-            os.system('unzip -qo {} -d {}'.format(zip_, os.path.join(down_dir[i], name_list[i])))
+        for (i, zip_) in enumerate(zip_list, len(tar_list)):
+            os.system('unzip -qo {} -d {}'.format(zip_, paths[i]))
 
-    for d_dir, name in zip(down_dir, name_list):
+    for d_dir, name in zip(down_dir_tar, name_list_tar):
+        down_dir_dict[name] = d_dir
+
+    for d_dir, name in zip(down_dir_zip, name_list_zip):
         down_dir_dict[name] = d_dir
 
     print("Finished decompression")
-    # print(down_dir_dict)
+
+    for key, value in down_dir_dict.items():
+        print(key, value)
     os.chdir(root)
     return down_dir_dict
-
-
-# d, n = un_zipper(sat_choice='1', path='/home/emo/Storage/Projects/Raster_Image_Calculator/Images')
-# print(d)
