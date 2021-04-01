@@ -2,8 +2,6 @@ import os
 import glob
 from index_calculator import index_calculator_landsat, index_calculator_sentinel
 
-# TODO: add path parameter to help save with better filenames
-
 
 def generate_indices(down_dir_dict=dict, test=False):
     """
