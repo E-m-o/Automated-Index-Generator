@@ -6,3 +6,5 @@ __pycache__/
 geckodriver.log
 crawlers/geckodriver.log
 Images/
+.vscode
+.vscode/
