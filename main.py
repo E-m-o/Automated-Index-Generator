@@ -12,7 +12,7 @@ root = os.getcwd()
 choice = None
 
 request = input("Enter Request Number ->")
-base_path = '/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Request.{}'.format(request)
+base_path = os.path.join(os.getcwd(), 'Images/Request.{}'.format(request))
 
 
 def downloader():
@@ -42,6 +42,7 @@ def downloader():
             date_list = get_dates(sat_choice=choice, test=False)
 
             for date in date_list:
+                # TODO: Add download paths -> START and END date
                 # FILE UPLOAD
                 upload_file(path)
 
@@ -57,7 +58,10 @@ def downloader():
                 # GET METADATA
                 meta = get_metadata(sat_choice=choice)
 
+                # SELECT IMAGES TO DOWNLOAD
                 download_list = download_selector(meta, sat_choice=choice)
+
+                # DOWNLOAD SELECTED IMAGES
                 download(download_list, sat_choice=choice, test=False)
 
             counter['explorer'] += 1
@@ -74,10 +78,17 @@ def downloader():
 
 
 def processor():
+    # DECOMPRESS IMAGES
     down_dir_dict = decompress(base_path)
+
+    # TODO: Add atmospheric correction codes
+
+    # GENERATE INDICES
     generate_indices(down_dir_dict, test=False)
+
+    # CREATE MOSAICS OF THE INDICES GENERATED
     mosaic_creator(base_path)
 
 
 # downloader()
-processor()
+# processor()
