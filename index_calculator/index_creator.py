@@ -57,7 +57,7 @@ def generate_indices(down_dir_dict=dict, test=False):
                     print('Unable to make all indices')
 
         os.chdir(base_dir)
-    return image_dir_list
+    # return image_dir_list
 
 
 def scourer(subdir_list=None, landsat_list_len=3, sentinel_list_len=3, test=False):
