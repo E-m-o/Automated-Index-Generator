@@ -44,17 +44,13 @@ def mosaic_creator(base_path=None, test=False):
                              "transform": out_trans
                              }
                             )
-            #     # noinspection PyUnboundLocalVariable
-            #     split = "/".join(key.split("/")[:-1])
             try:
                 try:
                     os.chdir(os.path.join(path, 'mosaics'))
                 except FileNotFoundError:
                     os.mkdir(os.path.join(path, 'mosaics'))
                     os.chdir(os.path.join(path, 'mosaics'))
-                # print(os.getcwd())
 
-                pos = date.split('_')[0]
                 with rasterio.open("{}_mosaic_{}.tiff".format(date, index), "w",
                                    **out_meta) as destination:
                     destination.write(mosaic)
