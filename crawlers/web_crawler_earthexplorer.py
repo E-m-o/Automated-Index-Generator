@@ -112,11 +112,6 @@ clean_flags = {
 }
 
 
-# TODO: make get_paths function
-def get_paths():
-    return None
-
-
 # noinspection PyShadowingNames
 def make_driver():
     """
