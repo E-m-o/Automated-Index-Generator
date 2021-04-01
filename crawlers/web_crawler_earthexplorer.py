@@ -214,8 +214,7 @@ def satellite_choice(test=False):
     if test:
         return "2"
     while True:
-        choice = input("\nChoose satellite: \n1. Landsat \n2.Sentinel \nYour choice: ")
-        print("\n")
+        choice = input("Choose satellite: \n1. Landsat \n2.Sentinel \nYour choice: ")
         if choice == "1":
             return choice
         if choice == "2":
@@ -421,9 +420,12 @@ def set_dataset(sat_choice='1'):
                     lsat_c1_l1_8.click()
 
                 try:
+                    WebDriverWait(driver, 10).until(lambda ele: ele.find_element_by_css_selector(path_dict['event']))
                     event = driver.find_element_by_css_selector(path_dict['event'])
                     event.click()
                 except NoSuchElementException:
+                    pass
+                except TimeoutException:
                     pass
             elif sat_choice == "2":
                 if not driver.find_element_by_css_selector(path_dict['sentinel_2']).is_displayed():
@@ -434,10 +436,14 @@ def set_dataset(sat_choice='1'):
                     sentinel_2.click()
 
                 try:
+                    WebDriverWait(driver, 10).until(lambda ele: ele.find_element_by_css_selector(path_dict['event']))
                     event = driver.find_element_by_css_selector(path_dict['event'])
                     event.click()
                 except NoSuchElementException:
                     pass
+                except TimeoutException:
+                    pass
+
             flags['explorer']['landsat_selector'] = True
             print('Dataset set successfully !!!')
             break
@@ -461,6 +467,7 @@ def get_results():
             results_tab = driver.find_element_by_css_selector(path_dict['results_datasets_tab'])
             results_tab.click()
             time.sleep(2)
+            WebDriverWait(driver, 10).until(lambda ele: ele.find_elements_by_xpath(path_dict['result_rows']))
             flags['explorer']['results'] = True
             print('Results fetched successfully !!!')
             break
@@ -651,7 +658,6 @@ def download(download_index=None, sat_choice='1', test=False):
     :param sat_choice: Satellite choice -> 1. Landsat | 2. Sentinel
     :type sat_choice: str
     """
-
     print('==============')
     while True:
         try:
@@ -665,15 +671,14 @@ def download(download_index=None, sat_choice='1', test=False):
                         download_waiter = WebDriverWait(driver, 3)
                         download_waiter.until(
                             ec.element_to_be_clickable((By.XPATH, path_dict['download_button_landsat']))).click()
-                        print('Downloading {}'.format(data[1]))
                     elif sat_choice == '2':
                         download_waiter = WebDriverWait(driver, 3)
                         download_waiter.until(
                             ec.element_to_be_clickable((By.XPATH, path_dict['download_button_sentinel']))).click()
-                        print('Downloading {}'.format(data[1]))
+                    print('Downloading {}'.format(data[1]))
                 close = driver.find_element_by_xpath(path_dict['download_close'])
                 close.click()
-                print('button clicked')
+                print('Closing Download dialog for {}'.format(data[1]))
             break
         except ElementClickInterceptedException:
             print('Element click intercepted')
