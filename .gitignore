@@ -14,3 +14,6 @@ index_calculator/__pycache__
 Presentaion/*
 Presentation
 tests/data
+*.log
+*/__pycache__/
+.*
