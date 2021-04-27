@@ -2,15 +2,17 @@ from rasterio import open as raster_open
 # from rasterio.plot import show
 import glob
 import os
+import math
 
 
-def apply_atmos_correction_landsat(request=None):
+def apply_atmos_correction_landsat(path=None):
     """Applies atmospheric correction to the read images
     
     Keyword Arguments:
-        request {str} -- request number (default: {None})
+        path {str} -- base_path (default: {None})
     """
-    path = os.path.join(os.getcwd(), 'Images/Request.{}'.format(request))
+    print("===============================")
+    print("Applying atmospheric correction")
     os.chdir(path)
     tif_list = glob.glob("./**/*.TIF", recursive=True)
     tif_dict = {}
@@ -26,21 +28,23 @@ def apply_atmos_correction_landsat(request=None):
         os.chdir(tif_dir)
         tif_dict[tif_dir].sort()
 
-        meta_file = glob.glob("*.txt")[0]
+        meta_file = glob.glob("*MTL.txt")[0]
 
         reflectance_mult_band = []
         reflectance_add_band = []
-        sun_elevation = None
+        sun_elevation = []
 
-        with open(meta_file, "r") as file:
-            for txt in file:
-                # print(txt, end="")
-                if "REFLECTANCE_ADD_BAND" in txt:
-                    reflectance_add_band.append(txt)
-                if "REFLECTANCE_MULT_BAND" in txt:
-                    reflectance_mult_band.append(txt)
-                if "SUN_ELEVATION" in txt:
-                    sun_elevation = txt
+        # with open(meta_file, "r") as file:
+        file = open(meta_file, "r")
+        for txt in file:
+            # print(txt, end="")
+            if "REFLECTANCE_ADD_BAND" in txt:
+                reflectance_add_band.append(txt)
+            if "REFLECTANCE_MULT_BAND" in txt:
+                reflectance_mult_band.append(txt)
+            if "SUN_ELEVATION" in txt:
+                sun_elevation.append(txt)
+        file.close()
 
         # for (mult, add) in zip(radiance_mult_band, radiance_add_band):
         #     print(mult.split('='), add, end="")
@@ -68,11 +72,12 @@ def apply_atmos_correction_landsat(request=None):
                     # print(tif.split('.')[1][-3:])
                     band_dict[band] = tif.split("/")[-1]
 
+        sun_elevation = float(sun_elevation[0].split("=")[-1].strip())
         for (band, mult, add) in zip(band_dict, reflectance_mult_band, reflectance_add_band):
             fn = band_dict[band]
             mult = float(mult.split("=")[-1].strip())
             add = float(add.split("=")[-1].strip())
-            print(band, mult, add)
+            # print(band, mult, add, sun_elevation)
 
             with raster_open(fn) as file:
                 temp = file.read(1).astype("float64")
@@ -85,6 +90,7 @@ def apply_atmos_correction_landsat(request=None):
                 # show(temp)
                 # print(file.transform)
             temp = mult * temp + add
+            temp = temp/math.cos(math.radians(float(sun_elevation)))
             # show(temp)
 
             temp_image = raster_open(fn, 'w', driver='GTiff',
@@ -96,6 +102,7 @@ def apply_atmos_correction_landsat(request=None):
             temp_image.write(temp, 1)
             temp_image.close()
         os.chdir(path)
+    print("Atmospheric correction applied successfully")
 
 
 # apply_atmos_correction_landsat("0")

@@ -1,0 +1,42 @@
+import os
+import glob
+import json
+from rasterio import open as r_open
+import numpy as np
+
+
+def tiff_to_json(path='/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Test_files/LC08_L1TP_144045_20210302_20210302_01_RT'):
+    os.chdir(path)
+    image_list = glob.glob("*1?.TIF")
+    image_list.sort()
+    print(image_list)
+    json_dict = {}
+    temp_dict = {}
+    for image in image_list:
+        print(f"{image}")
+        temp_band = r_open(image)
+        temp_profile = temp_band.profile
+        temp_image = temp_band.read(1).astype("float64")
+        profile = {}
+        for key, value in temp_profile.items():
+            if key != "transform":
+                if key == "crs":
+                    value = value.to_dict()
+                profile[key] = value
+                # print(key, type(key), value, type(value))
+
+            temp_dict["DN"] = temp_image.tolist()
+            temp_dict["DN.shape"] = temp_image.shape
+            temp_dict["profile"] = profile
+            break
+        json_dict[image] = temp_dict
+
+    with open("temp_json.json", "w") as out_file:
+        json.dump(json_dict, out_file, indent=6)
+
+    # print(json_dict)
+
+    return
+
+
+tiff_to_json()

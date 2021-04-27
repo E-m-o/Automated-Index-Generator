@@ -14,15 +14,15 @@ def decompress(path=str):
     print("===================")
     print("Decompressing files")
 
-    os.chdir(path=path)
-    root = os.getcwd()
+    # os.chdir(path=path)
+    # root = os.getcwd()
 
     name_list_tar = []
     down_dir_tar = []
     name_list_zip = []
     down_dir_zip = []
     down_dir_dict = {}
-    tar_list = glob.glob(os.path.join(root, '**/*.tar.gz'), recursive=True)
+    tar_list = glob.glob(os.path.join(path, '**/*.tar.gz'), recursive=True)
     paths = []
     if tar_list:
         for (i, tar) in enumerate(tar_list):
@@ -39,7 +39,7 @@ def decompress(path=str):
         for (i, tar) in enumerate(tar_list):
             os.system('tar -xzf {} -C {}'.format(tar, paths[i]))
 
-    zip_list = glob.glob(os.path.join(root, '**/*.zip'), recursive=True)
+    zip_list = glob.glob(os.path.join(path, '**/*.zip'), recursive=True)
     if zip_list:
         for (i, zip_) in enumerate(zip_list, len(tar_list)):
             zip_split = zip_.split('/')
@@ -64,6 +64,6 @@ def decompress(path=str):
     print("Finished decompression")
 
     for key, value in down_dir_dict.items():
-        print(key, value)
-    os.chdir(root)
+        print(key, "-->", value)
+    os.chdir(path)
     return down_dir_dict

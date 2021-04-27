@@ -6,37 +6,34 @@ import os
 import matplotlib.pyplot as plt
 
 
-def mosaic_creator(base_path=None, test=False):
+def mosaic_creator(base_path=None, test=False, show_flag=False):
 
     print("================")
     print("Creating Mosaics")
     indices = ["ndvi", "ndwi", "ndmi", "savi", "msavi"]
-    satellite = None
-    # start_files = {}
-    # end_files = {}
-    files_dict = {}
     date_list = ["Start_date", "End_date"]
 
     for date in date_list:
         paths = glob.glob(os.path.join(base_path, "**/{}".format(date)), recursive=True)
         path = paths[0]
         print(path)
-        index_dict = {index: [] for index in indices}
+        # index_dict = {index: [] for index in indices}
         for index in indices:
             print("Creating index {} for {}".format(index, " ".join(date.split('_'))))
-            index_image = glob.glob("{}/**/*{}*".format(path, index), recursive=True)
-            print(index_image)
+            index_image = glob.glob("{}/**/*_{}*".format(path, index), recursive=True)
+            # print(index_image)
 
             src_files_to_mosaic = []
             for file in index_image:
                 src = rasterio.open(file)
                 src_files_to_mosaic.append(src)
-            print(src_files_to_mosaic)
+            # print(src_files_to_mosaic)
 
             mosaic, out_trans = merge(src_files_to_mosaic)
-            # show(mosaic, cmap="gray")
-            # plt.waitforbuttonpress()
-            #
+            if show_flag:
+                show(mosaic, cmap="gray")
+                plt.waitforbuttonpress()
+
             out_meta = src_files_to_mosaic[0].meta.copy()
             out_meta.update({"driver": "GTiff",
                              "height": mosaic.shape[1],

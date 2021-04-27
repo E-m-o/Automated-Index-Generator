@@ -1,14 +1,16 @@
+import os
+
 from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 import time
 from datetime import datetime, timedelta
 from pandas import DataFrame
-
-global driver
 
 path_dict = {
     # login
@@ -22,10 +24,21 @@ path_dict = {
     # search criteria tab
     'search_criteria_tab': '#tab1',
     'shapefile_tab': '#tabUpload',
+    # shapefile selector
     'shapefile_selector': '#fileUploadForm > select:nth-child(2)',
     'upload': '#fileUploadFileInput',
     'upload_status': '#uploadProgressTable > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(4) > button:nth-child(1)',
     'map_use': '#coordUseMap',
+    # add coords
+    'decimal': '#lat_lon_section > label:nth-child(3)',
+    'add_coord': '#coordEntryAdd',
+    'add_lat': '#coordEntryDialogArea > div:nth-child(2) > input:nth-child(1)',
+    'add_long': '#coordEntryDialogArea > div:nth-child(5) > input:nth-child(1)',
+    'add_button_xpath': '/html/body/div[5]/div[3]/div/button[1]',
+    'cancel_add_coords':
+        'body > div:nth-child(14) > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)',
+    'clear_coords': '#coordEntryClear',
+    # date setter
     'date_start': '#start_linked',
     'date_end': '#end_linked',
     # datasets tab
@@ -113,14 +126,40 @@ clean_flags = {
 
 
 # noinspection PyShadowingNames
-def make_driver():
+def make_driver(id=None, base_path=None, firefox=True, chrome=False):
     """
     Makes the driver object and returns it
     :return: Driver for the program
-    :rtype: object
+    :rtype: selenium.webdriver.Firefox
     """
-    driver = webdriver.Chrome()
-    return driver
+    if firefox:
+        # binary = FirefoxBinary("/usr/bin/firefox")
+        # profile = FirefoxProfile("/home/emo/.mozilla/firefox/by25928h.selenium")
+        # profile.set_preference("browser.helperApps.alwaysAsk.force", False)
+        driver = webdriver.Firefox()
+        driver.maximize_window()
+        return driver
+    if chrome:
+        print(id)
+        options = webdriver.ChromeOptions()
+        down_dir_opt = None
+        if id == 0:
+            down_dir_opt = {'download.default_directory': f"{os.path.join(base_path, 'Start_date')}"}
+        if id == 1:
+            down_dir_opt = {'download.default_directory': f"{os.path.join(base_path, 'End_date')}"}
+        options.add_experimental_option('prefs', down_dir_opt)
+        driver = webdriver.Chrome(executable_path="/usr/bin/chromedriver", options=options)
+        return driver
+
+
+def create_dir(base_path=None):
+    try:
+        os.mkdir(base_path)
+        os.mkdir(os.path.join(base_path, "Start_date"))
+        os.mkdir(os.path.join(base_path, "End_date"))
+    except FileExistsError:
+        pass
+    return
 
 
 def switch_tabs(key):
@@ -133,8 +172,8 @@ def switch_tabs(key):
     print('Switching tabs...')
     while True:
         try:
-            datasets_tab = driver.find_element_by_css_selector(path_dict[key])
-            datasets_tab.click()
+            tab = driver.find_element_by_css_selector(path_dict[key])
+            tab.click()
             flags['explorer']['tab'] = True
             print('Tab switch successful !!!')
             break
@@ -174,6 +213,9 @@ def login():
     print('Attempting to log in')
     while True:
         try:
+
+            # if not driver.find_element_by_css_selector(path_dict['login_check']):
+
             username = driver.find_element_by_css_selector(path_dict['user'])
             username.send_keys('vineet')
 
@@ -182,6 +224,8 @@ def login():
 
             submit = driver.find_element_by_css_selector(path_dict['login_button'])
             submit.click()
+
+            time.sleep(10)
 
             login_waiter = WebDriverWait(driver, 5)
             login_waiter.until(lambda ele: ele.find_element_by_css_selector(path_dict['login_check']))
@@ -194,8 +238,9 @@ def login():
             flags['login'] = False
         except NoSuchElementException:
             print('Failed to log in -> No such element')
+            time.sleep(2)
             flags['login'] = False
-            login()
+            # login()
 
 
 def satellite_choice(test=False):
@@ -218,7 +263,7 @@ def satellite_choice(test=False):
             print('Invalid input \nRetry')
 
 
-def get_dates(sat_choice='2', test=False):
+def get_dates(sat_choice='1', test=False):
     """
     Gets the time_period of interest from the user
     :param sat_choice: Satellite choice -> 1. Landsat | 2. Sentinel
@@ -230,7 +275,7 @@ def get_dates(sat_choice='2', test=False):
     """
     if test:
         start_date_entry = '01/01/2021'
-        end_date_entry = '01/10/2021'
+        end_date_entry = '03/17/2021'
         return [[start_date_entry, end_date_entry]]
     else:
         start_date_entry = input('Enter a start date (format - mm/dd/yyyy) -> ')
@@ -286,8 +331,8 @@ def get_dates(sat_choice='2', test=False):
             return date_list
         except IndexError:
             print("Invalid date entry... Try again")
-            get_dates()
-
+            dates = get_dates()
+            return dates
 
 def access_explorer():
     """
@@ -369,6 +414,7 @@ def add_date(date_list=(str, str), test=False):
             print(date[0])
             print(date[1])
         return
+    switch_tabs('search_criteria_tab')
     while True:
         try:
             date_start = driver.find_element_by_css_selector(path_dict['date_start'])
@@ -445,6 +491,7 @@ def set_dataset(sat_choice='1'):
         except NoSuchElementException:
             flags['explorer']['landsat_selector'] = False
             print('Waiting for dataset list to load')
+            time.sleep(2)
 
 
 def get_results():
@@ -508,107 +555,107 @@ def get_metadata(sat_choice=str):
         'center_lat': [],
         'center_long': []
     }
+    while True:
+        try:
+            rows = driver.find_elements_by_xpath(path_dict['result_rows'])
+            # row_images = driver.find_elements_by_xpath(path_dict['row_links'])
+            print('Found {} results'.format(len(rows)))
+            for (index, row) in enumerate(rows, 1):
+                print("Extracting metadata for row {0:02d} images".format(index))
+                row.click()
+                time.sleep(5)
+                if sat_choice == '1':
+                    name = driver.find_element_by_xpath(path_dict['name_landsat']).get_attribute("innerHTML")
+                    wrs_path = driver.find_element_by_xpath(path_dict['wrs_path_landsat']).get_attribute("innerHTML")
+                    wrs_row = driver.find_element_by_xpath(path_dict['wrs_row_landsat']).get_attribute("innerHTML")
+                    cloud_cover_land = driver.find_element_by_xpath(path_dict['cloud_cover_landsat']).get_attribute(
+                        "innerHTML")
+                    ul_lat = driver.find_element_by_xpath(path_dict['UL_lat_landsat']).get_attribute("innerHTML")
+                    ul_long = driver.find_element_by_xpath(path_dict['UL_long_landsat']).get_attribute("innerHTML")
+                    ur_lat = driver.find_element_by_xpath(path_dict['UR_lat_landsat']).get_attribute("innerHTML")
+                    ur_long = driver.find_element_by_xpath(path_dict['UR_long_landsat']).get_attribute("innerHTML")
+                    ll_lat = driver.find_element_by_xpath(path_dict['LL_lat_landsat']).get_attribute("innerHTML")
+                    ll_long = driver.find_element_by_xpath(path_dict['LL_long_landsat']).get_attribute("innerHTML")
+                    lr_lat = driver.find_element_by_xpath(path_dict['LR_lat_landsat']).get_attribute("innerHTML")
+                    lr_long = driver.find_element_by_xpath(path_dict['LR_long_landsat']).get_attribute("innerHTML")
+                    center_lat = driver.find_element_by_xpath(path_dict['center_lat']).get_attribute("innerHTML")
+                    center_long = driver.find_element_by_xpath(path_dict['center_long']).get_attribute("innerHTML")
 
-    try:
-        rows = driver.find_elements_by_xpath(path_dict['result_rows'])
-        # row_images = driver.find_elements_by_xpath(path_dict['row_links'])
-        print('Found {} results'.format(len(rows)))
-        for (index, row) in enumerate(rows, 1):
-            print("Extracting metadata for row {0:02d} images".format(index))
-            row.click()
-            time.sleep(5)
-            if sat_choice == '1':
-                name = driver.find_element_by_xpath(path_dict['name_landsat']).get_attribute("innerHTML")
-                wrs_path = driver.find_element_by_xpath(path_dict['wrs_path_landsat']).get_attribute("innerHTML")
-                wrs_row = driver.find_element_by_xpath(path_dict['wrs_row_landsat']).get_attribute("innerHTML")
-                cloud_cover_land = driver.find_element_by_xpath(path_dict['cloud_cover_landsat']).get_attribute(
-                    "innerHTML")
-                ul_lat = driver.find_element_by_xpath(path_dict['UL_lat_landsat']).get_attribute("innerHTML")
-                ul_long = driver.find_element_by_xpath(path_dict['UL_long_landsat']).get_attribute("innerHTML")
-                ur_lat = driver.find_element_by_xpath(path_dict['UR_lat_landsat']).get_attribute("innerHTML")
-                ur_long = driver.find_element_by_xpath(path_dict['UR_long_landsat']).get_attribute("innerHTML")
-                ll_lat = driver.find_element_by_xpath(path_dict['LL_lat_landsat']).get_attribute("innerHTML")
-                ll_long = driver.find_element_by_xpath(path_dict['LL_long_landsat']).get_attribute("innerHTML")
-                lr_lat = driver.find_element_by_xpath(path_dict['LR_lat_landsat']).get_attribute("innerHTML")
-                lr_long = driver.find_element_by_xpath(path_dict['LR_long_landsat']).get_attribute("innerHTML")
-                center_lat = driver.find_element_by_xpath(path_dict['center_lat']).get_attribute("innerHTML")
-                center_long = driver.find_element_by_xpath(path_dict['center_long']).get_attribute("innerHTML")
+                    meta_ret['result_index'].append(index)
+                    meta_ret['name'].append(name)
+                    meta_ret['wrs_path'].append(wrs_path)
+                    meta_ret['wrs_row'].append(wrs_row)
+                    meta_ret['tile_number'].append(None)
+                    meta_ret['cloud_cover'].append(cloud_cover_land)
+                    meta_ret['ul_lat'].append(ul_lat)
+                    meta_ret['ul_long'].append(ul_long)
+                    meta_ret['ur_lat'].append(ur_lat)
+                    meta_ret['ur_long'].append(ur_long)
+                    meta_ret['ll_lat'].append(ll_lat)
+                    meta_ret['ll_long'].append(ll_long)
+                    meta_ret['lr_lat'].append(lr_lat)
+                    meta_ret['lr_long'].append(lr_long)
+                    meta_ret['center_lat'].append(center_lat)
+                    meta_ret['center_long'].append(center_long)
 
-                meta_ret['result_index'].append(index)
-                meta_ret['name'].append(name)
-                meta_ret['wrs_path'].append(wrs_path)
-                meta_ret['wrs_row'].append(wrs_row)
-                meta_ret['tile_number'].append(None)
-                meta_ret['cloud_cover'].append(cloud_cover_land)
-                meta_ret['ul_lat'].append(ul_lat)
-                meta_ret['ul_long'].append(ul_long)
-                meta_ret['ur_lat'].append(ur_lat)
-                meta_ret['ur_long'].append(ur_long)
-                meta_ret['ll_lat'].append(ll_lat)
-                meta_ret['ll_long'].append(ll_long)
-                meta_ret['lr_lat'].append(lr_lat)
-                meta_ret['lr_long'].append(lr_long)
-                meta_ret['center_lat'].append(center_lat)
-                meta_ret['center_long'].append(center_long)
+                elif sat_choice == '2':
+                    name = driver.find_element_by_xpath(path_dict['name_sentinel']).get_attribute("innerHTML")
+                    tile_number = driver.find_element_by_xpath(path_dict['tile_number']).get_attribute("innerHTML")
+                    cloud_cover_land = driver.find_element_by_xpath(path_dict['cloud_cover_sentinel']).get_attribute(
+                        "innerHTML")
+                    ul_lat = driver.find_element_by_xpath(path_dict['UL_lat_sentinel']).get_attribute("innerHTML")
+                    ul_long = driver.find_element_by_xpath(path_dict['UL_long_sentinel']).get_attribute("innerHTML")
+                    ur_lat = driver.find_element_by_xpath(path_dict['UR_lat_sentinel']).get_attribute("innerHTML")
+                    ur_long = driver.find_element_by_xpath(path_dict['UR_long_sentinel']).get_attribute("innerHTML")
+                    ll_lat = driver.find_element_by_xpath(path_dict['LL_lat_sentinel']).get_attribute("innerHTML")
+                    ll_long = driver.find_element_by_xpath(path_dict['LL_long_sentinel']).get_attribute("innerHTML")
+                    lr_lat = driver.find_element_by_xpath(path_dict['LR_lat_sentinel']).get_attribute("innerHTML")
+                    lr_long = driver.find_element_by_xpath(path_dict['LR_long_sentinel']).get_attribute("innerHTML")
+                    center_lat = driver.find_element_by_xpath(path_dict['center_lat']).get_attribute("innerHTML")
+                    center_long = driver.find_element_by_xpath(path_dict['center_long']).get_attribute("innerHTML")
 
-            elif sat_choice == '2':
-                name = driver.find_element_by_xpath(path_dict['name_sentinel']).get_attribute("innerHTML")
-                tile_number = driver.find_element_by_xpath(path_dict['tile_number']).get_attribute("innerHTML")
-                cloud_cover_land = driver.find_element_by_xpath(path_dict['cloud_cover_sentinel']).get_attribute(
-                    "innerHTML")
-                ul_lat = driver.find_element_by_xpath(path_dict['UL_lat_sentinel']).get_attribute("innerHTML")
-                ul_long = driver.find_element_by_xpath(path_dict['UL_long_sentinel']).get_attribute("innerHTML")
-                ur_lat = driver.find_element_by_xpath(path_dict['UR_lat_sentinel']).get_attribute("innerHTML")
-                ur_long = driver.find_element_by_xpath(path_dict['UR_long_sentinel']).get_attribute("innerHTML")
-                ll_lat = driver.find_element_by_xpath(path_dict['LL_lat_sentinel']).get_attribute("innerHTML")
-                ll_long = driver.find_element_by_xpath(path_dict['LL_long_sentinel']).get_attribute("innerHTML")
-                lr_lat = driver.find_element_by_xpath(path_dict['LR_lat_sentinel']).get_attribute("innerHTML")
-                lr_long = driver.find_element_by_xpath(path_dict['LR_long_sentinel']).get_attribute("innerHTML")
-                center_lat = driver.find_element_by_xpath(path_dict['center_lat']).get_attribute("innerHTML")
-                center_long = driver.find_element_by_xpath(path_dict['center_long']).get_attribute("innerHTML")
+                    meta_ret['result_index'].append(index)
+                    meta_ret['name'].append(name)
+                    meta_ret['wrs_path'].append(None)
+                    meta_ret['wrs_row'].append(None)
+                    meta_ret['tile_number'].append(tile_number)
+                    meta_ret['cloud_cover'].append(cloud_cover_land)
+                    meta_ret['ul_lat'].append(ul_lat)
+                    meta_ret['ul_long'].append(ul_long)
+                    meta_ret['ur_lat'].append(ur_lat)
+                    meta_ret['ur_long'].append(ur_long)
+                    meta_ret['ll_lat'].append(ll_lat)
+                    meta_ret['ll_long'].append(ll_long)
+                    meta_ret['lr_lat'].append(lr_lat)
+                    meta_ret['lr_long'].append(lr_long)
+                    meta_ret['center_lat'].append(center_lat)
+                    meta_ret['center_long'].append(center_long)
 
-                meta_ret['result_index'].append(index)
-                meta_ret['name'].append(name)
-                meta_ret['wrs_path'].append(None)
-                meta_ret['wrs_row'].append(None)
-                meta_ret['tile_number'].append(tile_number)
-                meta_ret['cloud_cover'].append(cloud_cover_land)
-                meta_ret['ul_lat'].append(ul_lat)
-                meta_ret['ul_long'].append(ul_long)
-                meta_ret['ur_lat'].append(ur_lat)
-                meta_ret['ur_long'].append(ur_long)
-                meta_ret['ll_lat'].append(ll_lat)
-                meta_ret['ll_long'].append(ll_long)
-                meta_ret['lr_lat'].append(lr_lat)
-                meta_ret['lr_long'].append(lr_long)
-                meta_ret['center_lat'].append(center_lat)
-                meta_ret['center_long'].append(center_long)
+                while True:
+                    try:
+                        close = driver.find_element_by_css_selector(path_dict['meta_close'])
+                        close.click()
+                        break
+                    except ElementClickInterceptedException:
+                        print('Element click intercepted')
+                        time.sleep(2)
+                    except ElementNotInteractableException:
+                        time.sleep(2)
+                        print('Element not interactable')
 
-            while True:
-                try:
-                    close = driver.find_element_by_css_selector(path_dict['meta_close'])
-                    close.click()
-                    break
-                except ElementClickInterceptedException:
-                    print('Element click intercepted')
-                    time.sleep(2)
-                except ElementNotInteractableException:
-                    time.sleep(2)
-                    print('Element not interactable')
-
-        print('Metadata extraction successful !!!')
-        flags['explorer']['metadata'] = True
-        return meta_ret
-    except NoSuchElementException:
-        print('Failed to extract metadata -> No such element')
-        time.sleep(2)
-        flags['explorer']['metadata'] = False
-    except TimeoutException:
-        print('Failed to extract metadata -> Timeout')
-        flags['explorer']['metadata'] = False
+            print('Metadata extraction successful !!!')
+            flags['explorer']['metadata'] = True
+            return meta_ret
+        except NoSuchElementException:
+            print('Failed to extract metadata -> No such element')
+            time.sleep(2)
+            flags['explorer']['metadata'] = False
+        except TimeoutException:
+            print('Failed to extract metadata -> Timeout')
+            flags['explorer']['metadata'] = False
 
 
-def download_selector(meta=dict, sat_choice="1"):
+def download_selector(meta=dict, sat_choice="1", test=False):
     """
     Returns the download index of the results
     :param meta: Dictionary of metadata
@@ -625,11 +672,13 @@ def download_selector(meta=dict, sat_choice="1"):
         download_index = []
         for group in data_grouped.groups:
             grp = data_grouped.get_group(group)
-            # print(grp)
+            print(grp)
             grp.sort_values(['cloud_cover'])
             mini = grp.iloc[-1]
             # print(mini['result_index'], mini['cloud_cover'])
             download_index.append([mini['result_index'], mini['name']])
+            if test:
+                return data, data_grouped, download_index
     elif sat_choice == "2":
         data_grouped = data.groupby(['tile_number'])
         download_index = []
@@ -640,7 +689,32 @@ def download_selector(meta=dict, sat_choice="1"):
             mini = grp.iloc[-1]
             # print(mini['result_index'], mini['cloud_cover'])
             download_index.append([mini['result_index'], mini['name']])
-    return download_index
+
+
+def waitUntilDownloadCompleted(maxTime=600):
+    driver.execute_script("window.open()")
+    # switch to new tab
+    driver.switch_to.window(driver.window_handles[-1])
+    # navigate to chrome downloads
+    driver.get('chrome://downloads')
+    # define the endTime
+    # endTime = time.time() + maxTime
+    while True:
+        try:
+            # get the download percentage
+            downloadPercentage = driver.execute_script(
+                "return document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot.querySelector('#progress').value")
+            # check if downloadPercentage is 100 (otherwise the script will keep waiting)
+            if downloadPercentage == 100:
+                # exit the method once it's completed
+                return downloadPercentage
+        except:
+            pass
+        # wait for 1 second before checking the percentage next time
+        time.sleep(1)
+        # exit method if the download not completed with in MaxTime.
+        # if time.time() > endTime:
+        #     break
 
 
 def download(download_index=None, sat_choice='1', test=False):
@@ -658,7 +732,7 @@ def download(download_index=None, sat_choice='1', test=False):
         try:
             download_buttons = driver.find_elements_by_xpath(path_dict['download_options'])
             for data in download_index:
-                print(data)
+                print(data[0])
                 download_buttons[data[0]-1].click()
                 time.sleep(2)
                 if not test:
@@ -666,10 +740,12 @@ def download(download_index=None, sat_choice='1', test=False):
                         download_waiter = WebDriverWait(driver, 3)
                         download_waiter.until(
                             ec.element_to_be_clickable((By.XPATH, path_dict['download_button_landsat']))).click()
+                        waitUntilDownloadCompleted()
                     elif sat_choice == '2':
                         download_waiter = WebDriverWait(driver, 3)
                         download_waiter.until(
                             ec.element_to_be_clickable((By.XPATH, path_dict['download_button_sentinel']))).click()
+                        waitUntilDownloadCompleted()
                     print('Downloading {}'.format(data[1]))
                 close = driver.find_element_by_xpath(path_dict['download_close'])
                 close.click()
@@ -694,3 +770,82 @@ def compare_flags():
         return True
     else:
         return False
+
+
+def add_coordinates(coords=None, test=False):
+    """
+    Adds the coordinates to the website search criteria
+    :param coords: contains the coordinates to be added to the site, in order
+    :type coords: list[float]
+    :param test: test case flag, for independently using the driver
+    :type test: bool
+    """
+    if test:
+        global driver
+        driver = make_driver()
+    switch_tabs("search_criteria_tab")
+    # noinspection PyUnboundLocalVariable
+    driver.find_element_by_css_selector(path_dict['decimal']).click()
+    count = 0
+    while True:
+        try:
+            for coord in coords:
+                # driver.switch_to.active_element()
+                add_button_waiter = WebDriverWait(driver, 10)
+                add_button_waiter.until(ec.element_to_be_clickable((By.CSS_SELECTOR, path_dict['add_coord'])))
+                driver.find_element_by_css_selector(path_dict['add_coord']).click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector(path_dict['add_lat']).send_keys(str(coord[0]))
+                driver.find_element_by_css_selector(path_dict['add_long']).send_keys(str(coord[1]))
+                time.sleep(0.5)
+
+                while count <= 4:
+                    try:
+                        count += 1
+                        # add_button_waiter = WebDriverWait(driver, 10)
+                        # add_button_waiter.until(ec.element_to_be_clickable((By.XPATH, path_dict['add_button_xpath'])))
+                        add_button = driver.find_element_by_xpath(path_dict['add_button_xpath'])
+                        driver.execute_script("arguments[0].click();", add_button)
+                        break
+                    except ElementClickInterceptedException:
+                        time.sleep(5)
+                        print("error - 1")
+                    except NoSuchElementException:
+                        time.sleep(5)
+                        print("error - 2")
+                    except TimeoutException:
+                        print("error - 3")
+            break
+        finally:
+            pass
+
+
+# root = "/home/chiko/Storage/Projects/Raster_Image_Calculator"
+# choice = "1"
+#
+# request = input("Enter Request Number -> ")
+# # request = 2
+# print(root)
+# base_path = os.path.join(root, 'Images/Request.{}'.format(request))
+#
+# create_dir(base_path)
+#
+# driver = make_driver(id=0, base_path=base_path, chrome=True, firefox=False)
+# access_login()
+# login()
+# access_explorer()
+# upload_file(path_="/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Test_files/test_mandala/mandlaBB.zip")
+# date = get_dates(sat_choice=choice, test=True)[0]
+# add_date(date_list=date)
+# # SET DATASET
+# set_dataset(sat_choice=choice)
+#
+# # RESULTS
+# get_results()
+#
+# # GET METADATA
+# meta = get_metadata(sat_choice=choice)
+#
+# # SELECT IMAGES TO DOWNLOAD
+# data, data_grped, download_list = download_selector(meta, sat_choice=choice, test=True)
+# # print(download_list)

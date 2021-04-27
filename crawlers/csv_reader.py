@@ -2,10 +2,10 @@ from pandas import DataFrame as df
 from pandas import read_csv
 import numpy as np
 
-csv = read_csv("/home/emo/Downloads/mandlaBlock.csv")
+csv = read_csv("/home/chiko/Downloads/mandlaBlock.csv")
 
 
-def csv_crawler(block=None, test=False):
+def csv_crawler(block=None, test=False, clipper=False):
     if test:
         block = "Mandla"
     data = df(csv)
@@ -23,6 +23,9 @@ def csv_crawler(block=None, test=False):
     for col in columns:
         temp.append(arr[col].tolist()[0])
     # print(temp)
+
+    if clipper:
+        return temp
 
     temp = np.array(temp)
 
@@ -42,6 +45,7 @@ def csv_crawler(block=None, test=False):
 # import web_crawler_earthexplorer
 #
 # coords = csv_crawler("Mandla")
+# print(coords)
 # driver = web_crawler_earthexplorer.make_driver()
 # web_crawler_earthexplorer.access_explorer()
 # web_crawler_earthexplorer.add_coordinates(coords)

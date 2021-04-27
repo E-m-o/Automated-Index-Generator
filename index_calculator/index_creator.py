@@ -55,6 +55,7 @@ def generate_indices(down_dir_dict=dict, test=False):
                     print('Unable to make all indices')
 
         os.chdir(base_dir)
+    print("Indices created successfully!!!")
     # return image_dir_list
 
 
