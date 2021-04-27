@@ -17,3 +17,4 @@ tests/data
 *.log
 */__pycache__/
 .*
+bla.txt
