@@ -8,3 +8,9 @@ crawlers/geckodriver.log
 Images/
 .vscode
 .vscode/
+crawlers/__pycache__
+index_calculator/__pycache__
+*.odp
+Presentaion/*
+Presentation
+tests/data
