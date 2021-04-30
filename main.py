@@ -1,11 +1,11 @@
-from analysis.analyser import analyser
-from crawlers import web_crawler_earthexplorer as earth
-from crawlers.csv_reader import csv_crawler
-from crawlers.web_crawler_earthexplorer import *
-from index_calculator.index_creator import generate_indices
-from mosaic.mosaic_creator import mosaic_creator
-from mosaic.unzipper import *
-from atmos_correction.atmos_correction_landsat import apply_atmos_correction_landsat
+from bin.analysis.analyser import analyser
+from web.crawlers import web_crawler_earthexplorer as earth
+from bin.crawlers.csv_reader import csv_crawler
+from web.crawlers.web_crawler_earthexplorer import *
+from bin.index_calculator.index_creator import generate_indices
+from bin.mosaic.mosaic_creator import mosaic_creator
+from bin.mosaic.unzipper import *
+from bin.atmos_correction.atmos_correction_landsat import apply_atmos_correction_landsat
 # path_list = ['/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Test_files/test_mandala/mandlaBB.zip']
 # , '/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/test_mandala/mandlaBB-2.zip'
 

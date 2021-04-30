@@ -11,10 +11,10 @@ Images/
 crawlers/__pycache__
 index_calculator/__pycache__
 *.odp
-Presentaion/*
 Presentation
 tests/data
 *.log
 */__pycache__/
 .*
-bla.txt
+tests/bla.txt
+.idea
