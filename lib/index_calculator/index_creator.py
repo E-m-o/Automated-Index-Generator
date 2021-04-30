@@ -1,6 +1,6 @@
 import os
 import glob
-from bin.index_calculator import index_calculator_landsat, index_calculator_sentinel
+from lib.index_calculator import index_calculator_landsat, index_calculator_sentinel
 
 
 def generate_indices(down_dir_dict=dict, test=False):

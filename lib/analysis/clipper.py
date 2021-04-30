@@ -6,7 +6,7 @@ import geopandas as gpd
 from fiona.crs import from_epsg
 from pycrs import parse
 
-from bin.crawlers.csv_reader import csv_crawler
+from lib.crawlers.csv_reader import csv_crawler
 
 fp = "/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Request.2/Start_date/mosaics/Start_date_mosaic_msavi.tiff"
 out_tif = "/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Request.2/Start_date/mosaics/start_clipped_msavi.tiff"
