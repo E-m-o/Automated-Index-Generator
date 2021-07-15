@@ -292,11 +292,11 @@ def execute_landsat(prefix=None, show_individual=False, show_all=False, show_onl
         if show_only:
             image_display_landsat()
             exit()
-        ndmi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        ndvi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        savi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        # ndmi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        # ndvi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        # savi_calc_landsat(prefix=prefix, show_flag=show_individual)
         msavi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        ndwi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        # ndwi_calc_landsat(prefix=prefix, show_flag=show_individual)
         if show_all:
             image_display_landsat()
     except RuntimeError:
