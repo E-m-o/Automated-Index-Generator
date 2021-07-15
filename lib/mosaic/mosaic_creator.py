@@ -10,7 +10,8 @@ def mosaic_creator(base_path=None, test=False, show_flag=False):
 
     print("================")
     print("Creating Mosaics")
-    indices = ["ndvi", "ndwi", "ndmi", "savi", "msavi"]
+    # indices = ["ndvi", "ndwi", "ndmi", "savi", "msavi"]
+    indices = ["msavi"]
     date_list = ["Start_date", "End_date"]
 
     for date in date_list:
@@ -20,7 +21,7 @@ def mosaic_creator(base_path=None, test=False, show_flag=False):
         # index_dict = {index: [] for index in indices}
         for index in indices:
             print("Creating index {} for {}".format(index, " ".join(date.split('_'))))
-            index_image = glob.glob("{}/**/*_{}*".format(path, index), recursive=True)
+            index_image = glob.glob("{}/**/*clipped_{}*".format(path, index), recursive=True)
             # print(index_image)
 
             src_files_to_mosaic = []
@@ -31,7 +32,7 @@ def mosaic_creator(base_path=None, test=False, show_flag=False):
 
             mosaic, out_trans = merge(src_files_to_mosaic)
             if show_flag:
-                show(mosaic, cmap="gray")
+                show(mosaic, cmap="terrain")
                 plt.waitforbuttonpress()
 
             out_meta = src_files_to_mosaic[0].meta.copy()
@@ -54,6 +55,7 @@ def mosaic_creator(base_path=None, test=False, show_flag=False):
                 os.chdir(base_path)
             except IndexError:
                 pass
+    print("Mosaics created successfully!!!")
     # print(len(image_dir_list))
     # for image_dir in image_dir_list:
     #     print(image_dir)

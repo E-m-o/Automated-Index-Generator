@@ -6,7 +6,7 @@ import glob
 np.seterr(divide='ignore', invalid='ignore')
 
 
-def band_returner_landsat(show_list=False):
+def band_returner_landsat_8(show_list=False):
     """
     Returns the list of relevant bands as per the truth value of input parameters
 
@@ -47,7 +47,7 @@ def band_returner_landsat(show_list=False):
         return False
 
 
-def ndmi_calc_landsat(prefix=None, show_flag=False):
+def ndmi_calc_landsat_8(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Moisture Index (NDMI) raster image
     :param prefix: Prefix to be added to the saved indices
@@ -56,7 +56,7 @@ def ndmi_calc_landsat(prefix=None, show_flag=False):
     :type show_flag: bool
     """
     # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
+    band_dict = band_returner_landsat_8()
 
     if band_dict:
         # read bands
@@ -73,7 +73,7 @@ def ndmi_calc_landsat(prefix=None, show_flag=False):
         )
 
         # save ndmi raster image
-        ndmi_image = open('./{}_ndmi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
+        ndmi_image = open('./{}_ndmi_landsat_8.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -83,11 +83,11 @@ def ndmi_calc_landsat(prefix=None, show_flag=False):
         ndmi_image.close()
 
         if show_flag:
-            ndmi = open('{}_ndmi_landsat.tiff'.format(prefix))
+            ndmi = open('{}_ndmi_landsat_8.tiff'.format(prefix))
             show(ndmi, cmap='Blues')
 
 
-def ndvi_calc_landsat(prefix=None, show_flag=False):
+def ndvi_calc_landsat_8(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Vegetation Index (NDVI) raster image
     :param prefix: Prefix to be added to the saved indices
@@ -96,7 +96,7 @@ def ndvi_calc_landsat(prefix=None, show_flag=False):
     :type show_flag: bool
     """
     # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
+    band_dict = band_returner_landsat_8()
 
     if band_dict:
         # read bands
@@ -113,7 +113,7 @@ def ndvi_calc_landsat(prefix=None, show_flag=False):
         )
 
         # save ndvi raster image
-        ndvi_image = open('./{}_ndvi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
+        ndvi_image = open('./{}_ndvi_landsat_8.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -123,11 +123,11 @@ def ndvi_calc_landsat(prefix=None, show_flag=False):
         ndvi_image.close()
 
         if show_flag:
-            ndvi = open('{}_ndvi_landsat.tiff'.format(prefix))
+            ndvi = open('{}_ndvi_landsat_8.tiff'.format(prefix))
             show(ndvi, cmap='Greens')
 
 
-def savi_calc_landsat(prefix=None, show_flag=False):
+def savi_calc_landsat_8(prefix=None, show_flag=False):
     """
     Calculates and saves the Soil Adjusted Vegetation Index (SAVI) raster image
     :param prefix: Prefix to be added to the saved indices
@@ -136,7 +136,7 @@ def savi_calc_landsat(prefix=None, show_flag=False):
     :type show_flag: bool
     """
     # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
+    band_dict = band_returner_landsat_8()
 
     if band_dict:
         # read bands
@@ -157,7 +157,7 @@ def savi_calc_landsat(prefix=None, show_flag=False):
         savi[savi < -1] = -1
 
         # save savi raster image
-        savi_image = open('./{}_savi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
+        savi_image = open('./{}_savi_landsat_8.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -167,11 +167,11 @@ def savi_calc_landsat(prefix=None, show_flag=False):
         savi_image.close()
 
         if show_flag:
-            savi = open('{}_savi_landsat.tiff'.format(prefix))
+            savi = open('{}_savi_landsat_8.tiff'.format(prefix))
             show(savi, cmap='Greens')
 
 
-def msavi_calc_landsat(prefix=None, show_flag=False):
+def msavi_calc_landsat_8(prefix=None, show_flag=False):
     """
     Calculates and saves the Modified Soil Adjusted Vegetation Index (MSAVI) raster image
     :param prefix: Prefix to be added to the saved indices
@@ -180,7 +180,7 @@ def msavi_calc_landsat(prefix=None, show_flag=False):
     :type show_flag: bool
     """
     # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
+    band_dict = band_returner_landsat_8()
 
     if band_dict:
         # read bands
@@ -201,7 +201,7 @@ def msavi_calc_landsat(prefix=None, show_flag=False):
         msavi[msavi < -1] = -1
 
         # save msavi raster image
-        msavi_image = open('./{}_msavi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
+        msavi_image = open('./{}_msavi_landsat_8.tiff'.format(prefix), 'w', driver='GTiff',
                            width=band5.width, height=band5.height,
                            count=1,
                            crs=band5.crs,
@@ -211,11 +211,11 @@ def msavi_calc_landsat(prefix=None, show_flag=False):
         msavi_image.close()
 
         if show_flag:
-            msavi = open('{}_msavi_landsat.tiff'.format(prefix))
+            msavi = open('{}_msavi_landsat_8.tiff'.format(prefix))
             show(msavi, cmap='Greens')
 
 
-def ndwi_calc_landsat(prefix=None, show_flag=False):
+def ndwi_calc_landsat_8(prefix=None, show_flag=False):
     """
     Calculates and saves the Normalised Difference Water Index (NDWI) raster image
     :param prefix: Prefix to be added to the saved indices
@@ -224,7 +224,7 @@ def ndwi_calc_landsat(prefix=None, show_flag=False):
     :type show_flag: bool
     """
     # get bands relevant to ndvi
-    band_dict = band_returner_landsat()
+    band_dict = band_returner_landsat_8()
 
     if band_dict:
         # read bands
@@ -245,7 +245,7 @@ def ndwi_calc_landsat(prefix=None, show_flag=False):
         ndwi[ndwi < -1] = -1
 
         # save ndwi raster image
-        ndwi_image = open('./{}_ndwi_landsat.tiff'.format(prefix), 'w', driver='GTiff',
+        ndwi_image = open('./{}_ndwi_landsat_8.tiff'.format(prefix), 'w', driver='GTiff',
                           width=band5.width, height=band5.height,
                           count=1,
                           crs=band5.crs,
@@ -255,19 +255,19 @@ def ndwi_calc_landsat(prefix=None, show_flag=False):
         ndwi_image.close()
 
         if show_flag:
-            ndwi = open('{}_ndwi_landsat.tiff'.format(prefix))
+            ndwi = open('{}_ndwi_landsat_8.tiff'.format(prefix))
             show(ndwi, cmap='Greens')
 
 
-def image_display_landsat():
+def image_display_landsat_8():
     """
     Displays the images of landsat indices in a folder one at a time
     """
-    ndmi = open('ndmi_landsat.tiff')
-    ndvi = open('ndvi_landsat.tiff')
-    savi = open('savi_landsat.tiff')
-    msavi = open('msavi_landsat.tiff')
-    ndwi = open('ndwi_landsat.tiff')
+    ndmi = open('ndmi_landsat_8.tiff')
+    ndvi = open('ndvi_landsat_8.tiff')
+    savi = open('savi_landsat_8.tiff')
+    msavi = open('msavi_landsat_8.tiff')
+    ndwi = open('ndwi_landsat_8.tiff')
     show(ndmi, cmap='Blues')
     show(ndvi, cmap='Greens')
     show(savi, cmap='Greens')
@@ -275,7 +275,7 @@ def image_display_landsat():
     show(ndwi, cmap='BrBG')
 
 
-def execute_landsat(prefix=None, show_individual=False, show_all=False, show_only=False):
+def execute_landsat_8(prefix=None, show_individual=False, show_all=False, show_only=False, indices_requested=[False, False, False, True, False]):
     """
     Executes the process of calculation of indices for landsat images
 
@@ -290,22 +290,27 @@ def execute_landsat(prefix=None, show_individual=False, show_all=False, show_onl
     """
     try:
         if show_only:
-            image_display_landsat()
+            image_display_landsat_8()
             exit()
-        # ndmi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        # ndvi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        # savi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        msavi_calc_landsat(prefix=prefix, show_flag=show_individual)
-        # ndwi_calc_landsat(prefix=prefix, show_flag=show_individual)
+        if indices_requested[0]==True:
+            ndmi_calc_landsat_8(prefix=prefix, show_flag=show_individual)
+        if indices_requested[1]==True:
+            ndvi_calc_landsat_8(prefix=prefix, show_flag=show_individual)
+        if indices_requested[2] == True:
+            savi_calc_landsat_8(prefix=prefix, show_flag=show_individual)
+        if indices_requested[3] == True:
+            msavi_calc_landsat_8(prefix=prefix, show_flag=show_individual)
+        if indices_requested[4] == True:
+            ndwi_calc_landsat_8(prefix=prefix, show_flag=show_individual)
         if show_all:
-            image_display_landsat()
+            image_display_landsat_8()
     except RuntimeError:
         print('Unable to show images')
 
 
-def landsat_test():
+def landsat_8_test():
     """
-    Test case for the index_calculator_landsat.py file
+    Test case for the index_calculator_landsat_8.py file
     """
-    execute_landsat(show_individual=True)
-    band_returner_landsat(show_list=True)
+    execute_landsat_8(show_individual=True)
+    band_returner_landsat_8(show_list=True)

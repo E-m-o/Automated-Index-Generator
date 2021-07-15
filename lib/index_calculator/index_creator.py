@@ -1,9 +1,9 @@
 import os
 import glob
-from lib.index_calculator import index_calculator_landsat, index_calculator_sentinel
+from lib.index_calculator import index_calculator_landsat_8, index_calculator_sentinel #, index_calculator_landsat_7, index_calculator_landsat_5
 
 
-def generate_indices(down_dir_dict=dict, test=False):
+def generate_indices(down_dir_dict=dict, test=False, sat_choice=None):
     """
     Creates all the indices for a sub-folder in subdir_list in which relevant bands are found
 
@@ -33,8 +33,17 @@ def generate_indices(down_dir_dict=dict, test=False):
                 print('Calculating Indices.....')
                 try:
                     prefix = path.split('/')[-1]
-                    # noinspection PyTypeChecker
-                    index_calculator_landsat.execute_landsat(prefix=prefix)
+                    if sat_choice=='1':
+                        # noinspection PyTypeChecker
+                        index_calculator_landsat_8.execute_landsat_8(prefix=prefix)
+                    # elif sat_choice=='2':
+                    #     # noinspection PyTypeChecker
+                    #     index_calculator_landsat_7.execute_landsat_7(prefix=prefix)
+                    # elif sat_choice == '3':
+                    #     # noinspection PyTypeChecker
+                    #     index_calculator_landsat_5.execute_landsat_5(prefix=prefix)
+                    else:
+                        pass
                     image_dir_list.append(os.getcwd())
                 except ValueError:
                     print('Unable to make all indices')
@@ -73,7 +82,7 @@ def scourer(subdir_list=None, landsat_list_len=3, sentinel_list_len=3, test=Fals
                 print('Calculating Indices.....')
                 try:
                     prefix = sub.split('/')[-1]
-                    index_calculator_landsat.execute_landsat(prefix=prefix)
+                    index_calculator_landsat_8.execute_landsat_8(prefix=prefix)
                 except ValueError:
                     print('Unable to make all indices')
         os.chdir(root)
@@ -86,7 +95,7 @@ def scourer(subdir_list=None, landsat_list_len=3, sentinel_list_len=3, test=Fals
             if not test:
                 print('Calculating Indices.....')
                 try:
-                    index_calculator_landsat.execute_landsat()
+                    index_calculator_landsat_8.execute_landsat_8()
                 except ValueError:
                     print('Unable to make all indices')
         os.chdir(root)

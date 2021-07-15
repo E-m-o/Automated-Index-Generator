@@ -22,10 +22,11 @@ def main():
             sat_choice = "1"
         else:
             sat_choice = "2"
-        query = region_listbox.get(ANCHOR).split(', ')[0]
+        block = int(region_listbox.get(ANCHOR).split(', ')[0])
         dates = [start_date_e.get(), end_date_e.get()]
-        print(dates, query, satellite.get())
+        print(dates, block, satellite.get())
         # root.quit()
+        downloader(sat_choice, block, dates)
 
     def select_region():
         selected_region.config(text=region_listbox.get(ANCHOR))

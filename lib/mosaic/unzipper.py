@@ -29,6 +29,7 @@ def decompress(path=str):
             tar_split = tar.split('/')
             split = '/'.join(tar_split[:-1])
             name = tar_split[-1].split('.')[0]
+
             name_list_tar.append(name)
             down_dir_tar.append(split)
             try:
@@ -36,7 +37,8 @@ def decompress(path=str):
                 os.mkdir(paths[i])
             except FileExistsError:
                 pass
-        for (i, tar) in enumerate(tar_list):
+        for (i, (tar, name, directory)) in enumerate(zip(tar_list, name_list_tar, down_dir_tar)):
+            print(name, "--->", directory)
             os.system('tar -xzf {} -C {}'.format(tar, paths[i]))
 
     zip_list = glob.glob(os.path.join(path, '**/*.zip'), recursive=True)
@@ -45,6 +47,7 @@ def decompress(path=str):
             zip_split = zip_.split('/')
             split = '/'.join(zip_split[:-1])
             name = zip_split[-1].split('.')[0]
+            print(name, "--->", split)
             name_list_zip.append(name)
             down_dir_zip.append(split)
             try:
@@ -52,7 +55,8 @@ def decompress(path=str):
                 os.mkdir(paths[i])
             except FileExistsError:
                 pass
-        for (i, zip_) in enumerate(zip_list, len(tar_list)):
+        for (i, (zip_, name, directory)) in enumerate(zip(zip_list, name_list_zip, down_dir_zip), len(tar_list)):
+            print(name, "--->", directory)
             os.system('unzip -qo {} -d {}'.format(zip_, paths[i]))
 
     for d_dir, name in zip(down_dir_tar, name_list_tar):
@@ -63,7 +67,7 @@ def decompress(path=str):
 
     print("Finished decompression")
 
-    for key, value in down_dir_dict.items():
-        print(key, "-->", value)
+    # for key, value in down_dir_dict.items():
+    #     print(key, "-->", value)
     os.chdir(path)
     return down_dir_dict
