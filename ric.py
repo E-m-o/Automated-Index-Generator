@@ -18,7 +18,11 @@ from main import *
 
 params = OrderedDict()
 
-def saver(dates_bool=True, dates=None, block_bool=False, block=None, indices_bool=False, indices=None, sat_bool=False, sat=None, ret=False):
+def saver(dates_bool=True, dates=None,
+          block_bool=False, block=None,
+          indices_bool=False, indices=None,
+          sat_bool=False, sat=None,
+          ret=False):
     if dates_bool:
         params['dates'] = dates
     if block_bool:

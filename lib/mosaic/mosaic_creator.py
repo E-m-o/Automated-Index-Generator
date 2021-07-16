@@ -6,12 +6,16 @@ import os
 import matplotlib.pyplot as plt
 
 
-def mosaic_creator(base_path=None, test=False, show_flag=False):
+def mosaic_creator(base_path=None, test=False, show_flag=False, requested_indices=None):
 
     print("================")
     print("Creating Mosaics")
-    # indices = ["ndvi", "ndwi", "ndmi", "savi", "msavi"]
-    indices = ["msavi"]
+    indice_list = ["ndmi", "ndvi", "savi", "msavi", "ndwi"]
+    choice = []
+    for idx, boolean in enumerate(requested_indices):
+        if boolean == True:
+            choice.append(idx)
+    indices = [indice_list[i] for i in requested_indices]
     date_list = ["Start_date", "End_date"]
 
     for date in date_list:

@@ -15,7 +15,7 @@ def getFeatures(gdf):
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
 
 
-def clipper(request, indice_requested=None, show_flag=False):
+def clipper(request, indice_requested=None, show_flag=False, base_path=str):
     """
     Clips the raster image to the ROI and saves it.
     :param request: request number for the downloaded images
@@ -34,7 +34,7 @@ def clipper(request, indice_requested=None, show_flag=False):
 
     # indices = ["msavi"]
     for index in indices:
-        fp = glob.glob(f"/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Request.{request}/**/*{index}*",
+        fp = glob.glob(f"{base_path}.{request}/**/*{index}*",
                        recursive=True)
 
         # for f_name in fp:

@@ -18,9 +18,9 @@ def csv_getter(path=None, just_get=False):
     return csv
 
 
-def csv_crawler(block=2027, clipper=False):
+def csv_crawler(block=2027, clipper=False, root=str):
     
-    csv = csv_getter('/home/chiko/Storage/Projects/Raster_Image_Calculator/subdist_boundingBox.csv')
+    csv = csv_getter(f'{root}/subdist_boundingBox.csv')
 
     data = df(csv)
     # print(data)

@@ -13,8 +13,10 @@ from api.api import *
 # path_list = ['/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Test_files/test_mandala/mandlaBB.zip']
 # , '/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/test_mandala/mandlaBB-2.zip'
 
-root = "/home/chiko/Storage/Projects/Raster_Image_Calculator"
+# root = "/home/chiko/Storage/Projects/Raster_Image_Calculator"
+root = os.getcwd()
 choice = None
+
 
 # request = input("Enter Request Number -> ")
 request = "3"
@@ -104,17 +106,17 @@ def processor(sat_choice=None, requested_indices=[False, False, False, True, Fal
 
     # CLIP INDICES
     clip_time = time.time()
-    clipper(request=request, indice_requested=requested_indices)
+    clipper(request=request, indice_requested=requested_indices, base_path=base_path)
     clip_time = int(time.time() - clip_time)
 
     # CREATE MOSAICS OF THE INDICES GENERATED
     mosaic_time = time.time()
-    mosaic_creator(base_path)
+    mosaic_creator(base_path=base_path, requested_indices=requested_indices)
     mosaic_time = int(time.time() - mosaic_time)
 
     # CREATE MOSAICS OF THE INDICES GENERATED
     analysis_time = time.time()
-    analyser(base_path)
+    analyser(base_path, requested_indices=requested_indices)
     analysis_time = int(time.time() - analysis_time)
     print("================================")
     print("{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}".format("Decompress", "{:10.2f}".format(decompress_time/60),
@@ -127,7 +129,7 @@ def processor(sat_choice=None, requested_indices=[False, False, False, True, Fal
 
 def main_test():
     download_time = time.time()
-    sat_choice, requested_indices = downloader(test=True, block=2027)  # for downloading from the api
+    # sat_choice, requested_indices = downloader(test=True, block=2027, root=root)  # for downloading from the api
     download_time = time.time() - download_time
     print("{:<15}".format("Download time"))
     print("{:<15}".format(download_time / 60))
@@ -140,4 +142,4 @@ def main_test():
     print("{:<15}".format("Processing time"))
     print("{:<15}".format(process_time / 60))
 
-# main_test()
+main_test()

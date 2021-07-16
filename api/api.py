@@ -61,6 +61,7 @@ def scene_finder(api=None, sat_choice=None, date=None, coordinates=None):
             start_date=date[0],
             end_date=date[1],
         )
+        # print(scenes)
     elif sat_choice == "2":
         scenes = api.search(
             dataset=landsat_7_collection,
@@ -194,13 +195,13 @@ def download_selector(scenes=None, test=False, sat_choice=None):
     return down_list, None
 
 
-def downloader(sat_choice=None, block=2027, dates=None, indice_requested=[False, False, False, True, False], test=False):
+def downloader(sat_choice=None, block=2027, dates=None, indice_requested=[False, False, False, True, False], test=False, root=str):
     api = API(username, password)
     if test==True:
         sat_choice = satellite_selector()
         dates = get_dates(sat_choice=sat_choice, test=False)
         indice_requested = indices_requested()
-    request = str(random.randint(1,101))
+    request = str(random.randint(5,101))
     try:
         try:
             os.rmdir(f'./Images/Request.{request}')
@@ -210,10 +211,11 @@ def downloader(sat_choice=None, block=2027, dates=None, indice_requested=[False,
             os.mkdir(f"./Images/Request.{request}/End_date")
     except:
         pass
-    co_ord = csv_crawler(block=block, clipper=True)
+    co_ord = csv_crawler(block=block, clipper=True, root=root)
     # print(co_ord)
     for (id, date) in enumerate(dates):
         scenes = scene_finder(api, sat_choice, date, coordinates=co_ord)
+        print(scenes)
         # scene_list, scene_data = download_selector(scenes, test=True, sat_choice=sat_choice)
         scene_list, scene_data = download_selector(scenes, sat_choice=sat_choice)
         scene_downloader(scene_list, id=id, request=request, sat_choice=sat_choice)

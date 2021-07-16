@@ -6,13 +6,19 @@ import glob
 import matplotlib.pyplot as plt
 
 
-def analyser(path=None):
+def analyser(path=None, requested_indices=[False, False, False, True, False]):
     print("================")
     print("Analysing images")
     mosaic_paths = [os.path.join(path, "End_date/mosaics"), os.path.join(path, "Start_date/mosaics")]
     comparison_dict = {}
-    # indices = ["ndvi", "ndwi", "ndmi", "savi", "msavi"]
-    indices = ["msavi"]
+    indice_list = ["ndmi", "ndvi", "savi", "msavi", "ndwi"]
+    choice = []
+    for idx, boolean in enumerate(requested_indices):
+        if boolean == True:
+            choice.append(idx)
+    indices = [indice_list[i] for i in requested_indices]
+
+    # indices = ["msavi"]
     for index in indices:
         for mosaic_path in mosaic_paths:
             os.chdir(mosaic_path)
