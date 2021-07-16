@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 
 
-def mosaic_creator(base_path=None, test=False, show_flag=False, requested_indices=None):
+def mosaic_creator(base_path=None, show_flag=False, requested_indices=None, test=False):
 
     print("================")
     print("Creating Mosaics")

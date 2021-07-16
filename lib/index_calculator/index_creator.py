@@ -1,6 +1,6 @@
 import os
 import glob
-from lib.index_calculator import index_calculator_landsat_8, index_calculator_sentinel #, index_calculator_landsat_7, index_calculator_landsat_5
+from lib.index_calculator import index_calculator_landsat_8, index_calculator_sentinel, index_calculator_landsat_7, index_calculator_landsat_5
 
 
 def generate_indices(down_dir_dict=dict, test=False, sat_choice=None):
@@ -36,12 +36,12 @@ def generate_indices(down_dir_dict=dict, test=False, sat_choice=None):
                     if sat_choice=='1':
                         # noinspection PyTypeChecker
                         index_calculator_landsat_8.execute_landsat_8(prefix=prefix)
-                    # elif sat_choice=='2':
-                    #     # noinspection PyTypeChecker
-                    #     index_calculator_landsat_7.execute_landsat_7(prefix=prefix)
-                    # elif sat_choice == '3':
-                    #     # noinspection PyTypeChecker
-                    #     index_calculator_landsat_5.execute_landsat_5(prefix=prefix)
+                    elif sat_choice=='2':
+                        # noinspection PyTypeChecker
+                        index_calculator_landsat_7.execute_landsat_7(prefix=prefix)
+                    elif sat_choice == '3':
+                        # noinspection PyTypeChecker
+                        index_calculator_landsat_5.execute_landsat_5(prefix=prefix)
                     else:
                         pass
                     image_dir_list.append(os.getcwd())
