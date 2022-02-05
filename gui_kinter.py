@@ -5,6 +5,7 @@ from main import *
 
 root = Tk()
 
+
 def main():
     global selected_region
     global selected_dates
@@ -104,6 +105,7 @@ def main():
     submit_button.grid(row=1, column=1)
 
     mainloop()
+
 
 main()
 # downloader(sat_choice, query, dates)

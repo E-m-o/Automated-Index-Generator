@@ -18,6 +18,9 @@ def getFeatures(gdf):
 def clipper(request, indice_requested=None, show_flag=False, base_path=str):
     """
     Clips the raster image to the ROI and saves it.
+    :param base_path: base path of the images
+    :param show_flag: boolean flag to show the images clipped
+    :param indice_requested:
     :param request: request number for the downloaded images
     :type request: str
     :rtype: None
@@ -28,7 +31,7 @@ def clipper(request, indice_requested=None, show_flag=False, base_path=str):
     indice_list = ["ndmi", "ndvi", "savi", "msavi", "ndwi"]
     choice = []
     for idx, boolean in enumerate(indice_requested):
-        if boolean==True:
+        if boolean == True:
             choice.append(idx)
     indices = [indice_list[i] for i in indice_requested]
 
@@ -106,10 +109,10 @@ def clipper(request, indice_requested=None, show_flag=False, base_path=str):
             with rasterio.open(out_tif[i], "w", **out_meta[i]) as destination:
                 destination.write(out_img[i])
 
-        if show_flag==True:
+        if show_flag:
             for i in range(length_path_list):
                 clipped = rasterio.open(out_tif[i])
                 show(clipped, cmap="terrain")
             # print(clipped.shape)
 
-    print("Indices clipped sucessfully!!!")
+    print("Indices clipped successfully!!!")

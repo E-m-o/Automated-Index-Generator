@@ -279,6 +279,7 @@ def execute_landsat_5(prefix=None, show_individual=False, show_all=False, show_o
     """
     Executes the process of calculation of indices for landsat images
 
+    :param indices_requested: boolean list for requested indices
     :param prefix: Prefix to be added to the saved indices
     :type prefix: string
     :param show_individual: setting for showing individual images while calculating indices
@@ -292,15 +293,15 @@ def execute_landsat_5(prefix=None, show_individual=False, show_all=False, show_o
         if show_only:
             image_display_landsat_5()
             exit()
-        if indices_requested[0]==True:
+        if indices_requested[0]:
             ndmi_calc_landsat_5(prefix=prefix, show_flag=show_individual)
-        if indices_requested[1]==True:
+        if indices_requested[1]:
             ndvi_calc_landsat_5(prefix=prefix, show_flag=show_individual)
-        if indices_requested[2] == True:
+        if indices_requested[2]:
             savi_calc_landsat_5(prefix=prefix, show_flag=show_individual)
-        if indices_requested[3] == True:
+        if indices_requested[3]:
             msavi_calc_landsat_5(prefix=prefix, show_flag=show_individual)
-        if indices_requested[4] == True:
+        if indices_requested[4]:
             ndwi_calc_landsat_5(prefix=prefix, show_flag=show_individual)
         if show_all:
             image_display_landsat_5()

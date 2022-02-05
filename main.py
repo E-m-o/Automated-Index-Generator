@@ -1,5 +1,3 @@
-import time
-
 from lib.analysis.analyser import analyser
 from lib.analysis.clipper import clipper
 from web.crawlers import web_crawler_earthexplorer as earth
@@ -10,18 +8,15 @@ from lib.mosaic.mosaic_creator import mosaic_creator
 from lib.mosaic.unzipper import *
 from lib.atmos_correction.atmos_correction_landsat import apply_atmos_correction_landsat
 from api.api import *
-# path_list = ['/home/emo/Storage/Projects/Raster_Image_Calculator/Images/Test_files/test_mandala/mandlaBB.zip']
-# , '/home/emo/Storage/Projects/Raster_Image_Calculator/Test_files/test_mandala/mandlaBB-2.zip'
 
-# root = "/home/chiko/Storage/Projects/Raster_Image_Calculator"
 root = os.getcwd()
 choice = None
-
 
 # request = input("Enter Request Number -> ")
 request = "3"
 # request = 2
-print(root)
+print(f"root = {root}")
+
 base_path = os.path.join(root, 'Images/Request.{}'.format(request))
 
 create_dir(base_path)
@@ -41,23 +36,24 @@ def downloader_web():
 
         # if counter['login'] == 0:  # Login only once per session
         #     counter['login'] = 1
-            # LOGIN PAGE ACCESSED
+        # LOGIN PAGE ACCESSED
         access_login()
 
-            # ENTERING LOGIN DETAILS
+        # ENTERING LOGIN DETAILS
         login()
 
         # if counter['explorer'] == 0:  # Access explorer only once per session
-            # driver.refresh()
+        # driver.refresh()
 
-            # ACCESS EXPLORER
+        # ACCESS EXPLORER
         access_explorer()
 
         # FILE UPLOAD
         # if id == 0:
         # coordinates = csv_crawler(test=True)
         # add_coordinates(coordinates)
-        upload_file(path_="/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Test_files/test_mandala/mandlaBB.zip")
+        upload_file(
+            path_=f"{root}/Images/Test_files/test_mandala/mandlaBB.zip")
 
         # TODO: Add download paths -> START and END date
 
@@ -89,6 +85,11 @@ def downloader_web():
 
 
 def processor(sat_choice=None, requested_indices=[False, False, False, True, False]):
+    """
+    Processes the downloaded images
+    :param sat_choice: Satellite choice -- 1 -> Landsat 8, 2 -> Landsat 7, 3 -> Landsat 5, 4 -> Sentinel
+    :param requested_indices: Indices requested to be processed
+    """
     # DECOMPRESS IMAGES
     decompress_time = time.time()
     down_dir_dict = decompress(base_path)
@@ -119,27 +120,27 @@ def processor(sat_choice=None, requested_indices=[False, False, False, True, Fal
     analyser(base_path, requested_indices=requested_indices)
     analysis_time = int(time.time() - analysis_time)
     print("================================")
-    print("{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}".format("Decompress", "{:10.2f}".format(decompress_time/60),
-                                                          "Atmos     ", "{:10.2f}".format(atmos_time/60),
-                                                          "Index     ", "{:10.2f}".format(index_time/60),
-                                                          "Clipper   ", "{:10.2f}".format(clip_time/ 60),
-                                                          "Mosaic    ", "{:10.2f}".format(mosaic_time/60),
-                                                          "Analysis  ", "{:10.2f}".format(analysis_time/60)))
+    print("{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}\n{}{:<}".format("Decompress", "{:10.2f}".format(decompress_time / 60),
+                                                          "Atmos     ", "{:10.2f}".format(atmos_time / 60),
+                                                          "Index     ", "{:10.2f}".format(index_time / 60),
+                                                          "Clipper   ", "{:10.2f}".format(clip_time / 60),
+                                                          "Mosaic    ", "{:10.2f}".format(mosaic_time / 60),
+                                                          "Analysis  ", "{:10.2f}".format(analysis_time / 60)))
 
 
 def main_test():
     download_time = time.time()
-    # sat_choice, requested_indices = downloader(test=True, block=2027, root=root)  # for downloading from the api
+    sat_choice, requested_indices = downloader(test=False, block=2027, root=root)  # for downloading from the api
     download_time = time.time() - download_time
     print("{:<15}".format("Download time"))
     print("{:<15}".format(download_time / 60))
 
-    # downloader_web()  # for downloading from the website
-    requested_indices=[False, False, False, True, False]
+    requested_indices = [False, False, False, True, False]
     process_time = time.time()
-    processor(sat_choice="1", requested_indices=requested_indices)
+    processor(sat_choice=sat_choice, requested_indices=requested_indices)
     process_time = time.time() - process_time
     print("{:<15}".format("Processing time"))
     print("{:<15}".format(process_time / 60))
+
 
 main_test()

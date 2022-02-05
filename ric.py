@@ -279,7 +279,7 @@ class Ui_main_window(object):
               , sat_bool=True, sat=self.satellite)
         print(params)
         self.running_warning()
-        downloader(sat_choice=params['sat'], block=params['block'], dates=params['dates'], indice_requested=params['indices'])
+        downloader(sat_choice=params['sat'], block=params['block'], dates=params['dates'], indices_requested=params['indices'])
 
     def running_warning(self):
         run_warn = QMessageBox()

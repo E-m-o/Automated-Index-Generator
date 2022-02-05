@@ -1,3 +1,5 @@
+# SCRIPT TO DOWNLOAD FILES FROM THE WEB
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, \
     UnexpectedAlertPresentException, WebDriverException

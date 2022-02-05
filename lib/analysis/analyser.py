@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 
 
 def analyser(path=None, requested_indices=[False, False, False, True, False]):
+    """
+    Performs time-series analysis on the images
+    :param path: image directory path
+    :param requested_indices: list of indices on which analysis is to be carried out
+    :return: None
+    """
     print("================")
     print("Analysing images")
     mosaic_paths = [os.path.join(path, "End_date/mosaics"), os.path.join(path, "Start_date/mosaics")]
@@ -68,6 +74,7 @@ def analyser(path=None, requested_indices=[False, False, False, True, False]):
                 else:
                     analysis[i, j] = 1
                     # greater_than[i, j] = 1
+
         # for i in range(analysis.shape[0]):
         #     for j in range(analysis.shape[1]):
         #         analysis[i, j] = (analysis[i, j] - min)/(max - min)
@@ -79,6 +86,7 @@ def analyser(path=None, requested_indices=[False, False, False, True, False]):
         #             max = analysis[i, j]
         #         if analysis[i, j] < min:
         #             min = analysis[i, j]
+
         print(max, min)
         figure_size = (20, 20)
         plt.figure(figsize=figure_size)
@@ -98,4 +106,3 @@ def analyser(path=None, requested_indices=[False, False, False, True, False]):
     print("Analysis successfully completed!!!")
     return
 
-# analyser("/home/chiko/Storage/Projects/Raster_Image_Calculator/Images/Request.2")

@@ -46,14 +46,6 @@ def apply_atmos_correction_landsat(path=None):
                 sun_elevation.append(txt)
         file.close()
 
-        # for (mult, add) in zip(radiance_mult_band, radiance_add_band):
-        #     print(mult.split('='), add, end="")
-        #
-        # for (mult, add) in zip(reflectance_mult_band, reflectance_add_band):
-        #     print(mult, add, end="")
-        #
-        # print(sun_elevation)
-
         band_dict = {
             "1": None,
             "2": None,
