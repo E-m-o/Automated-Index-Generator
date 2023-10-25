@@ -12,3 +12,4 @@ Presentation
 .idea
 tests/
 *.ipynb
+*.png
