@@ -20,4 +20,4 @@ You will be prompted to:
 The result will be in the analysis folder in the latest Request folder in the Images directory.
 
 Example Result:
-![Sample Output](./docs/Automated Index Calculator.png "Sample NDVI Output")
+![Sample Output](https://github.com/nooodle-soup/Automated-Index-Generator/blob/master/docs/Automated%20Index%20Calculator.png)
